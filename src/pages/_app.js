@@ -1,11 +1,22 @@
-import { initAuth } from '../firebase/auth/initAuth';
-import '../styles/globals.css'
-
-// Initialize NextJS Firebase auth package.
-initAuth();
+/* eslint-disable react/jsx-props-no-spreading */
+import { useEffect } from 'react';
+import { Layout } from '../components/Layout';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
+  return (
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
+  );
 }
 
-export default MyApp
+export default MyApp;

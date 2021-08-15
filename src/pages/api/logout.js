@@ -1,16 +1,9 @@
-// ./pages/api/logout
-import { unsetAuthCookies } from 'next-firebase-auth'
-import { initAuth } from '../../firebase' // the module you created above
+import { withCookies } from '../../utils/api/withCookies';
+import { userCookiesOptions } from '../../utils/api/useCookiesOptions';
 
-initAuth()
+const handler = async (req, res, { cookies }) => {
+  cookies.set('user', undefined, userCookiesOptions);
+  res.end();
+};
 
-const handler = async (req, res) => {
-  try {
-    await unsetAuthCookies(req, res)
-  } catch (e) {
-    return res.status(500).json({ error: 'Unexpected error.' })
-  }
-  return res.status(200).json({ success: true })
-}
-
-export default handler
+export default withCookies(handler);
