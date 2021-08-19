@@ -1,11 +1,8 @@
-import Cookies from 'cookies';
-import { cookieKeys } from '../api/cookiesKeys';
+import { getUserCookie } from './getUserCookie';
 
 const protectPage = (getServerSideProps) => async (ctx) => {
-  const { req, res } = ctx;
-  const cookies = new Cookies(req, res, { keys: cookieKeys });
-  const userCookies = cookies.get('user', { signed: true });
-  if (!userCookies) {
+  const userCookie = getUserCookie(ctx.req, ctx.res);
+  if (!userCookie) {
     return {
       redirect: {
         destination: `${process.env.authRoute || '/auth'}?from=${ctx.resolvedUrl}`,
@@ -13,7 +10,7 @@ const protectPage = (getServerSideProps) => async (ctx) => {
       },
     };
   }
-  return getServerSideProps(ctx);
+  return getServerSideProps(ctx, { userCookie });
 };
 
 export {

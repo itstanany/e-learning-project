@@ -1,3 +1,5 @@
+import { cookieKeys } from './cookiesKeys';
+
 const userCookiesOptions = {
   httpOnly: true,
   maxAge: 12 * 60 * 60 * 24 * 1000, // twelve days
@@ -6,6 +8,7 @@ const userCookiesOptions = {
   sameSite: 'strict',
   secure: false, // set this to false in local (non-HTTPS) development
   signed: true,
+  keys: cookieKeys,
 };
 
 export { userCookiesOptions };

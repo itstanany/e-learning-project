@@ -1,4 +1,6 @@
-import React from 'react';
+/* eslint-disable react/require-default-props */
+import React/* , { useEffect, useState }  */ from 'react';
+import Link from 'next/link';
 // nodejs library that concatenates classes
 import classNames from 'classnames';
 // nodejs library to set properties for components
@@ -15,15 +17,18 @@ import Drawer from '@material-ui/core/Drawer';
 import Menu from '@material-ui/icons/Menu';
 // core components
 import styles from '../../assets/jss/material-kit-react/components/headerStyle.js';
+import HeaderLinks from './HeaderLinks.js';
 
 const useStyles = makeStyles(styles);
 
-export default function Header(props) {
+const Header = (props) => {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+  const handleDrawerToggle = (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setMobileOpen((currentMobileOpen) => !currentMobileOpen);
   };
   const headerColorChange = () => {
     const { color, changeColorOnScroll } = props;
@@ -45,7 +50,7 @@ export default function Header(props) {
     }
   };
   const {
-    color = 'dark', rightLinks, leftLinks, brand, fixed, absolute,
+    color = 'dark', /*  rightLinks, */ leftLinks, brand, fixed, absolute,
   } = props;
   const appBarClasses = classNames({
     [classes.appBar]: true,
@@ -53,7 +58,22 @@ export default function Header(props) {
     [classes.absolute]: absolute,
     [classes.fixed]: fixed,
   });
-  const brandComponent = <Button className={classes.title}>{brand}</Button>;
+  // const brandComponent = <Button className={classes.title}>{brand}</Button>;
+  // const brandComponent = <Link href="/" passHref><a className={classes.title}>{brand}</a></Link>;
+  const brandComponent = (
+    <Link
+      href="/"
+      passHref
+    >
+      <Button
+        className={classes.title}
+      >
+        {
+          brand
+        }
+      </Button>
+    </Link>
+  );
   React.useEffect(() => {
     if (props.changeColorOnScroll) {
       window.addEventListener('scroll', headerColorChange);
@@ -66,19 +86,36 @@ export default function Header(props) {
   });
   return (
     <AppBar className={appBarClasses}>
+      {/*
+        * This tool bar renders in order:
+        * Brand Component
+        * Left links component (mdUp)
+        * Right links from (mdUp)
+        * Menu icon (smDown) as a toggler button for opening a drawer of both right and left links
+      */}
       <Toolbar className={classes.container}>
-        {leftLinks !== undefined ? brandComponent : null}
+        {
+          leftLinks !== undefined
+            ? brandComponent
+            : null
+        }
         <div className={classes.flex}>
-          {leftLinks !== undefined ? (
-            <Hidden smDown implementation="css">
-              {leftLinks}
-            </Hidden>
-          ) : (
-            brandComponent
-          )}
+          {
+            leftLinks !== undefined
+              ? (
+                <Hidden smDown implementation="css">
+                  {leftLinks}
+                </Hidden>
+              )
+              : (
+                brandComponent
+              )
+          }
         </div>
         <Hidden smDown implementation="css">
-          {rightLinks}
+          {/* {rightLinks} */}
+          <HeaderLinks handleDrawerToggle={handleDrawerToggle}/*  user={user}  */ />
+          {/* <AuthNavItem handleDrawerToggle={handleDrawerToggle} user={user} /> */}
         </Hidden>
         <Hidden mdUp>
           <IconButton
@@ -90,6 +127,10 @@ export default function Header(props) {
           </IconButton>
         </Hidden>
       </Toolbar>
+
+      {/*
+        * Drawer of left and right links components (smDown)
+      */}
       <Hidden mdUp implementation="js">
         <Drawer
           variant="temporary"
@@ -102,13 +143,18 @@ export default function Header(props) {
         >
           <div className={classes.appResponsive}>
             {leftLinks}
-            {rightLinks}
+
+            {/* {rightLinks} */}
+            <HeaderLinks handleDrawerToggle={handleDrawerToggle}/*  user={user}  */ />
+            {/* <AuthNavItem handleDrawerToggle={handleDrawerToggle} user={user} /> */}
           </div>
         </Drawer>
       </Hidden>
     </AppBar>
   );
-}
+};
+
+export default Header;
 
 Header.propTypes = {
   color: PropTypes.oneOf([
@@ -122,17 +168,18 @@ Header.propTypes = {
     'rose',
     'dark',
   ]),
-  rightLinks: PropTypes.node,
+  // rightLinks: PropTypes.node,
   leftLinks: PropTypes.node,
   brand: PropTypes.string,
   fixed: PropTypes.bool,
   absolute: PropTypes.bool,
   // this will cause the sidebar to change the color from
   // props.color (see above) to changeColorOnScroll.color
-  // when the window.pageYOffset is heigher or equal to
+  // when the window.pageYOffset is higher or equal to
   // changeColorOnScroll.height and then when it is smaller than
   // changeColorOnScroll.height change it back to
   // props.color (see above)
+  // eslint-disable-next-line react/require-default-props
   changeColorOnScroll: PropTypes.shape({
     height: PropTypes.number.isRequired,
     color: PropTypes.oneOf([

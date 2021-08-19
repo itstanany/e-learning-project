@@ -1,21 +1,3 @@
-// import Head from 'next/head'
-// import Image from 'next/image'
-// import Link from 'next/link'
-// import styles from '../styles/Home.module.css'
-
-// export default function Home() {
-//   return (
-//     <div style={{ width: '100%', margin: '0 auto', padding: '50px' }}>
-//       Home page container
-//       <br />
-//       <Link href="/dashboard">
-//         <a>
-//           Dashboard
-//         </a>
-//       </Link>
-//     </div>)
-// }
-
 import React from 'react';
 // nodejs library that concatenates classes
 import classNames from 'classnames';
@@ -25,12 +7,9 @@ import { makeStyles } from '@material-ui/core/styles';
 // @material-ui/icons
 
 // core components
-import Header from '../components/Header/Header.js';
-import Footer from '../components/Footer/Footer.js';
 import GridContainer from '../components/Grid/GridContainer.js';
 import GridItem from '../components/Grid/GridItem.js';
 import Button from '../components/CustomButtons/Button.js';
-import HeaderLinks from '../components/Header/HeaderLinks.js';
 import Parallax from '../components/Parallax/Parallax.js';
 
 import styles from '../assets/jss/material-kit-react/views/landingPage.js';
@@ -40,27 +19,12 @@ import ProductSection from '../components/Sections/ProductSection.js';
 import TeamSection from '../components/Sections/TeamSection.js';
 import WorkSection from '../components/Sections/WorkSection.js';
 
-const dashboardRoutes = [];
-
 const useStyles = makeStyles(styles);
 
-export default function LandingPage(props) {
+export default function LandingPage() {
   const classes = useStyles();
-  // const { ...rest } = props;
   return (
     <div>
-      {/* <Header
-        color="dark"
-        routes={dashboardRoutes}
-        brand="Material Kit React"
-        rightLinks={<HeaderLinks />}
-        fixed
-        changeColorOnScroll={{
-          height: 400,
-          color: 'white',
-        }}
-        {...rest}
-      /> */}
       <Parallax filter image={require('../assets/img/landing-bg.jpg').default}>
         <div className={classes.container}>
           <GridContainer>
@@ -96,7 +60,6 @@ export default function LandingPage(props) {
           <WorkSection />
         </div>
       </div>
-      {/* <Footer /> */}
     </div>
   );
 }

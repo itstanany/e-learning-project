@@ -1,20 +1,10 @@
 import firebase from 'firebase/app';
+import { verifyOnBackend } from '../../../utils/client';
 import { auth } from './auth.config';
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-const verifyOnBackEnd = ({ idToken, isNewUser }) => fetch('/api/signin', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    idToken,
-    isNewUser,
-  }),
-}).then((signinRes) => signinRes.json());
-
-const signinWithGoogle = async () => {
+const loginWithGoogle = async () => {
   const res = await auth.signInWithPopup(googleProvider);
   console.log({ res });
   // official way to get idTOken of google sign in
@@ -24,11 +14,12 @@ const signinWithGoogle = async () => {
   // const idToken = await auth.currentUser.getIdToken();
   const idToken = res.user.Aa;
   console.log({ idToken });
-  const result = await verifyOnBackEnd({ idToken, isNewUser: res.additionalUserInfo.isNewUser });
+  const result = await verifyOnBackend({ idToken, isNewUser: res.additionalUserInfo.isNewUser });
+  console.log({ result });
   return result;
 };
 
 export {
   googleProvider,
-  signinWithGoogle,
+  loginWithGoogle,
 };
