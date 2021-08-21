@@ -1,24 +1,31 @@
+/**
+ * Add Course Form
+ */
+
+/**
+ * TO DO
+ * Form validation
+ */
+
 /* eslint-disable react/destructuring-assignment */
 import React, { useCallback, useRef, useState } from 'react';
-
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+// styles
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+// icons
 import AddToQueueIcon from '@material-ui/icons/AddToQueue';
-
-import { Snackbar } from '@material-ui/core';
+// components
+import {
+  CircularProgress, Snackbar, Container, Typography, Grid, TextField,
+  Button, Avatar,
+} from '@material-ui/core';
+import { Alert } from '../../components/Alert';
+import { InputText, InputNumber } from '../../components/Input';
+// helper utilities
 import { getAllAuthors } from '../api/user/allauthors';
 import { adminEditorAccess } from '../../utils/clientServer/adminEditorAccess';
 import { getUserDoc } from '../api/user/userdoc';
 import { protectPage } from '../../utils/clientServer/protectPage';
 import { apiPost } from '../../utils/client';
-import { Alert } from '../../components/Alert';
-import { InputText } from '../../components/Input';
-import { InputNumber } from '../../components/Input';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,12 +44,15 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    height: '3em',
+    font: '2em',
   },
   lecture: {
     borderStyle: 'solid',
     borderRadius: '10px',
-    margin: '5px',
-    paddingTop: '10px',
+    borderColor: '#e0e0e0',
+    margin: '5px 0px',
+    padding: '5px',
   },
 }));
 
@@ -59,9 +69,11 @@ const AddCourse = (props) => {
     title: '',
     author: props?.userDoc?.name,
     description: '',
-    price: 0,
+    price: '',
   });
+  // value of file input
   const [thumbnail, setThumbnail] = useState(null);
+  // snackbar toast message state
   const [snackbarState, setSnackbarState] = useState({
     open: false,
     message: '',
@@ -70,29 +82,35 @@ const AddCourse = (props) => {
   const [courseInfo, setCourseInfo] = useState(initialCourseState.current);
   const lectureOrder = useRef(1);
   const [lectures, setLectures] = useState(initialLectureState);
+  // loading during submitting
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handlerInpChange = useCallback((e, { index, value: ChildValue } = {}) => {
-    console.log({
-      e,
-      index,
-      ChildValue,
-    });
+  const handlerInpChange = useCallback((e, { index, value: unformattedValue } = {}) => {
+    /**
+   * Handle input change
+   * @param e => input change html event
+   * @param index => number, index of changed lecture in lectures array
+   * @param value: unformattedValue => value either string or number value
+   */
     const { target: { value, name } } = e;
     if (index === undefined) {
       if (name === 'thumbnail') return setThumbnail(e.target.files[0]);
-      return setCourseInfo((prevState) => ({ ...prevState, [name]: ChildValue }));
+      return setCourseInfo((prevState) => ({ ...prevState, [name]: unformattedValue || value }));
     }
     return setLectures((prevState) => {
       const newState = [...prevState];
       newState[index] = {
         ...newState[index],
-        [name]: ChildValue,
+        [name]: unformattedValue || value,
       };
       return newState;
     });
   }, []);
 
   const handlerAddNewLect = useCallback(() => {
+    /**
+     * Add New lecture entry form
+     */
     lectureOrder.current += 1;
     setLectures((prevState) => ([...prevState, {
       ...(initialLectureState[0]),
@@ -101,7 +119,12 @@ const AddCourse = (props) => {
   }, [lectureOrder]);
 
   const handleSubmit = useCallback(async (e) => {
+    /**
+     * Submit course to the back-end
+     * @param "e" => submit html event
+     */
     e.preventDefault();
+    setIsLoading(true);
     const formData = new FormData();
     formData.set('courseInfo', JSON.stringify(courseInfo));
     formData.append('lectures', JSON.stringify(lectures));
@@ -112,16 +135,19 @@ const AddCourse = (props) => {
       setCourseInfo(initialCourseState.current);
       lectureOrder.current = 1;
       setLectures(initialLectureState);
+      setIsLoading(false);
       return;
     }
+    setIsLoading(false);
     setSnackbarState({ open: true, message: 'Failed to Added. Try again', severity: 'error' });
   }, [courseInfo, lectures, thumbnail]);
 
   const handlerSnackbarClose = useCallback(() => {
+    /**
+     * Control visibility of Snackbar toast
+     */
     setSnackbarState((prevState) => ({ ...prevState, open: false }));
   }, []);
-  console.log({ courseInfo });
-  console.log({ lectures });
   return (
     <Container component="main" maxWidth="lg">
       <div className={classes.paper}>
@@ -134,6 +160,7 @@ const AddCourse = (props) => {
         <form className={classes.form} noValidate name="addCourseForm">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
+              {/* Course Title */}
               <InputText
                 tag={TextField}
                 autoComplete="courseTitle"
@@ -149,20 +176,9 @@ const AddCourse = (props) => {
                 onChange={handlerInpChange}
                 key="title"
               />
-              {/* <TextField
-                autoComplete="courseTitle"
-                name="title"
-                variant="outlined"
-                required
-                fullWidth
-                id="title"
-                label="Course Title"
-                autoFocus
-                value={courseInfo.title}
-                onChange={handlerInpChange}
-              /> */}
             </Grid>
             <Grid item xs={12} sm={6}>
+              {/* Course Thumbnail */}
               <TextField
                 tag={TextField}
                 variant="outlined"
@@ -179,21 +195,8 @@ const AddCourse = (props) => {
                   shrink: true,
                 }}
               />
-              {/* <TextField
-                variant="outlined"
-                required
-                fullWidth
-                type="file"
-                id="thumbnail"
-                label="Course Thumbnail"
-                name="thumbnail"
-                autoComplete="thumbnail"
-                onChange={handlerInpChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              /> */}
             </Grid>
+            {/* Course Description */}
             <Grid item xs={12}>
               <InputText
                 tag={TextField}
@@ -210,34 +213,9 @@ const AddCourse = (props) => {
                 value={courseInfo.description}
                 onChange={handlerInpChange}
               />
-              {/* <TextField
-                variant="outlined"
-                multiline
-                minRows={3}
-                required
-                fullWidth
-                id="description"
-                label="Course Description"
-                name="description"
-                autoComplete="description"
-                value={courseInfo.description}
-                onChange={handlerInpChange}
-              /> */}
             </Grid>
             <Grid item xs={12} md={3}>
-              {/* <InputText
-                id="author"
-                select
-                fullWidth
-                label="Course Author"
-                value={courseInfo.author}
-                SelectProps={{
-                  native: true,
-                }}
-                variant="outlined"
-                name="author"
-                onChange={handlerInpChange}
-              > */}
+              {/* Course Author */}
               <TextField
                 id="author"
                 key="author"
@@ -251,6 +229,7 @@ const AddCourse = (props) => {
                 variant="outlined"
                 name="author"
                 onChange={handlerInpChange}
+                disabled={props.userDoc.role !== 'admin'}
               >
                 {
                   props?.allAuthors
@@ -261,9 +240,9 @@ const AddCourse = (props) => {
                   ))
                 }
               </TextField>
-              {/* </InputText> */}
             </Grid>
             <Grid item xs={12} md={3}>
+              {/* Course Price */}
               <InputNumber
                 tag={TextField}
                 variant="outlined"
@@ -276,19 +255,8 @@ const AddCourse = (props) => {
                 autoComplete="number"
                 value={courseInfo.price}
                 onChange={handlerInpChange}
+                key="coursePrice"
               />
-              {/* <TextField
-                variant="outlined"
-                type="number"
-                required
-                fullWidth
-                id="price"
-                label="Course Price"
-                name="price"
-                autoComplete="number"
-                value={courseInfo.price}
-                onChange={handlerInpChange}
-              /> */}
             </Grid>
             <Grid xs={12}>
               <Typography
@@ -302,7 +270,9 @@ const AddCourse = (props) => {
               {
                 lectures.map((lecture, index) => (
                   <Grid key={lecture.order} container spacing={2} className={classes.lecture}>
+                    {/* Lecture Entry Subform */}
                     <Grid item xs={12} sm={6}>
+                      {/* Lecture Title */}
                       <InputText
                         tag={TextField}
                         variant="outlined"
@@ -314,26 +284,15 @@ const AddCourse = (props) => {
                         name="title"
                         autoComplete="title"
                         value={lecture.title}
-                        // onChange={(e) => handlerInpChange(e, { index })}
                         onChange={handlerInpChange}
                         index={index}
                       />
-                      {/* <TextField
-                        variant="outlined"
-                        required
-                        fullWidth
-                        id="title"
-                        key="title"
-                        label="Lecture Title"
-                        name="title"
-                        autoComplete="title"
-                        value={lecture.title}
-                        onChange={(e) => handlerInpChange(e, { index })}
-                      /> */}
                     </Grid>
                     <Grid item xs={12} sm={6}>
+                      {/* Lecture source */}
                       <InputNumber
                         tag={TextField}
+                        type="number"
                         variant="outlined"
                         required
                         fullWidth
@@ -343,24 +302,12 @@ const AddCourse = (props) => {
                         name="source"
                         autoComplete="lectureSource"
                         value={lecture.source}
-                        // onChange={(e) => handlerInpChange(e, { index })}
                         onChange={handlerInpChange}
                         index={index}
                       />
-                      {/* <TextField
-                        variant="outlined"
-                        required
-                        fullWidth
-                        id="source"
-                        key="source"
-                        label="Lecture ID"
-                        name="source"
-                        autoComplete="lectureSource"
-                        value={lecture.source}
-                        onChange={(e) => handlerInpChange(e, { index })}
-                      /> */}
                     </Grid>
                     <Grid item xs={12} sm={6}>
+                      {/* Lecture description */}
                       <InputText
                         tag={TextField}
                         variant="outlined"
@@ -374,27 +321,12 @@ const AddCourse = (props) => {
                         name="description"
                         autoComplete="description"
                         value={lecture.description}
-                        // onChange={(e) => handlerInpChange(e, { index })}
                         onChange={handlerInpChange}
                         index={index}
                       />
-                      {/* <TextField
-                        variant="outlined"
-                        required
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        id="description"
-                        key="description"
-                        label="Lecture Description"
-                        name="description"
-                        autoComplete="description"
-                        value={lecture.description}
-                        // onChange={(e) => handlerInpChange(e, { index })}
-                        onChange={handlerInpChange}
-                      /> */}
                     </Grid>
                     <Grid item xs={12} sm={6}>
+                      {/* Lecture Order */}
                       <InputNumber
                         tag={TextField}
                         variant="outlined"
@@ -409,21 +341,6 @@ const AddCourse = (props) => {
                         autoComplete="lectureOrder"
                         value={lecture.order}
                       />
-                      {/*
-                      <TextField
-                        variant="outlined"
-                        required
-                        fullWidth
-                        type="number"
-                        disabled
-                        id="lectureOrder"
-                        key="lectureOrder"
-                        label="Lecture Order"
-                        name="lectureOrder"
-                        autoComplete="lectureOrder"
-                        value={lecture.order}
-                      />
-                      */}
                     </Grid>
                   </Grid>
                 ))
@@ -433,35 +350,44 @@ const AddCourse = (props) => {
           </Grid>
           <Grid container spacing={2} direction="column" justifyContent="flex-end">
             <Grid item xs={8} md={3}>
+              {/* Add new Lecture subform entry */}
               <Button
                 fullWidth
                 variant="contained"
                 color="primary"
                 onClick={handlerAddNewLect}
+                disabled={isLoading}
               >
                 Add New Lecture
               </Button>
             </Grid>
             <Grid item xs={8} md={3}>
+              {/* Submit button */}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color="secondary"
-                // className={classes.submit}
+                className={classes.submit}
                 onClick={handleSubmit}
+                disabled={isLoading}
               >
                 Submit
+                &nbsp;
+                {
+                  isLoading
+                  && <CircularProgress size="2em" />
+                }
               </Button>
             </Grid>
           </Grid>
         </form>
       </div>
+      {/* Toast message */}
       <Snackbar
         autoHideDuration={6000}
         open={snackbarState.open}
         onClose={handlerSnackbarClose}
-      // message={snackbarMessage}
       >
         <Alert
           severity={snackbarState.severity}
