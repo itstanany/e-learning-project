@@ -1,21 +1,16 @@
-import { withCookies } from '../../../utils/api/withCookies';
-import { adminApp, adminFirestore } from '../../../firebase/admin';
+import { getUserDoc, withCookies } from '../../../utils/server';
 
-const getUserDoc = ({ uid }) => adminFirestore.doc(`/users/${uid}`).get().then((docRef) => docRef.data());
-
+/**
+ * return user document from database
+ */
 const handler = async (req, res, { cookies }) => {
   const userCookie = JSON.parse(cookies.get('user') || null);
   if (!userCookie) {
     res.json({ user: null });
   } else {
-    const userDoc = await (await adminApp.firestore().doc(`/users/${userCookie.uid}`).get()).data();
-    console.log({ userDoc });
+    const userDoc = await getUserDoc({ uid: userCookie?.uid });
     res.json({ userDoc });
   }
 };
 
 export default withCookies(handler);
-
-export {
-  getUserDoc,
-};

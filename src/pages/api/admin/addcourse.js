@@ -1,6 +1,6 @@
 import nextConnect from 'next-connect';
-import { multerUpload, uploadFile } from '../../../utils/api/middlewares';
-import { saveCourseInfo } from '../../../utils/api/helpers';
+import { multerUpload, uploadFile } from '../../../utils/server/middlewares';
+import { saveCourseInfo } from '../../../utils/server';
 
 // router for the "/addcourse" route
 const handler = nextConnect();

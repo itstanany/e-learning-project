@@ -1,15 +1,17 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, {
+  memo, useCallback, useEffect, useState,
+} from 'react';
 
 /**
    * This function Used to ensure that the return value is string
    * If the input is not string return empty string
    * otherwise, return string supplied
    */
-const format = (text) => {
+const format = (text) =>
   // console.log('inside format and text is');
   // console.log({ text });
-  return text != null ? text : '';
-};
+  (text != null ? text : '')
+  ;
 
 /**
  * Ensure the return value is
@@ -85,7 +87,7 @@ const InputText = ({
    * It renders as a default "input" component,
    * ... but if "tag" property is supplied as a property, use the specified tag
    */
-  // console.log({ parentValue, onChange, ...remaining });
+  console.log({ parentValue, onChange, ...remaining });
   const [localeValue, setLocaleValue] = useState(format(parentValue));
 
   /**
@@ -107,9 +109,10 @@ const InputText = ({
     if (onChange) onChange(e, { value: unformat(localeValue), index: remaining?.index });
   }, [localeValue]);
 
-  // useEffect(() => {
-  //   console.log('component mounted');
-  // }, []);
+  useEffect(() => {
+    console.log('component mounted');
+    setLocaleValue(parentValue);
+  }, [parentValue]);
 
   console.log('OUTSIDE ANY METHOD');
   console.log({ localeValue });
@@ -131,3 +134,7 @@ export default memoizedInputText;
 export {
   memoizedInputText as InputText,
 };
+
+// export {
+//   InputText,
+// };

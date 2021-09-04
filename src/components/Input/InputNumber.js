@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 
 function format(num) {
   /**
@@ -124,6 +124,10 @@ const InputNumber = ({
    *  ... the component is instantly become uncontrolled and can't return back to be controlled
    */
   const [localeValue, setLocaleValue] = useState(format(value));
+
+  useEffect(() => {
+    setLocaleValue(value);
+  }, [value]);
 
   const handleChange = useCallback((e) => {
     /**

@@ -28,22 +28,20 @@ export default function Footer(props) {
   });
   return (
     < div className={classes.container} >
-
-      {/*       
       <div className={classes.left}>
         <List className={classes.list}>
           <ListItem className={classes.inlineBlock}>
             <a
-              href="https://www.creative-tim.com/?ref=mkr-footer"
+              href="https://github.com/ahmdGeek/e-learning"
               className={classes.block}
               target="_blank"
             >
-              Creative Tim
+              Source Code
             </a>
           </ListItem>
           <ListItem className={classes.inlineBlock}>
             <a
-              href="https://www.creative-tim.com/presentation?ref=mkr-footer"
+              href="#"
               className={classes.block}
               target="_blank"
             >
@@ -52,7 +50,7 @@ export default function Footer(props) {
           </ListItem>
           <ListItem className={classes.inlineBlock}>
             <a
-              href="http://blog.creative-tim.com/?ref=mkr-footer"
+              href="#"
               className={classes.block}
               target="_blank"
             >
@@ -61,32 +59,46 @@ export default function Footer(props) {
           </ListItem>
           <ListItem className={classes.inlineBlock}>
             <a
-              href="https://www.creative-tim.com/license?ref=mkr-footer"
+              href="#"
               className={classes.block}
               target="_blank"
             >
               Licenses
             </a>
           </ListItem>
+          <ListItem className={classes.inlineBlock}>
+            <a
+              href="/admin/cadd"
+              className={classes.block}
+            >
+              Admin
+            </a>
+          </ListItem>
         </List>
       </div>
-       */}
 
-      {/* <div className={classes.right}> */}
-      &copy; {1900 + new Date().getYear()} , made with{" "}
-      <Favorite className={classes.icon} />
-      {/* by{" "} */}
-      {/* <a
-          href="https://www.creative-tim.com?ref=mkr-footer"
+      <div className={classes.right}>
+        &copy;
+        {
+          1900 + new Date().getYear()
+        }
+        ,
+        made with
+        &nbsp;
+        <Favorite className={classes.icon} />
+        &nbsp;
+        by
+        <a
+          href="https://www.linkedin.com/in/ahmdgeek/"
           className={aClasses}
           target="_blank"
-        > */}
-      &nbsp;
-      @ Cairo
-      {/* </a>{" "} */}
-      {/* for a better web. */}
-    </div>
-    // </div >
+        >
+          &nbsp;
+          ahmdGeek
+        </a>{" "}
+        for a better web.
+      </div>
+    </div >
   );
 }
 

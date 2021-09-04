@@ -1,22 +1,21 @@
-import { Button, CircularProgress, Grid } from '@material-ui/core';
-import Google from '@material-ui/icons/Google';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { useUser } from '../customHooks/useUser';
-import { loginWithGoogle } from '../firebase/client';
+import { signinWithGoogle } from '../firebase';
 
-function Auth() {
+function Signin() {
   const { user, isLoading, isError } = useUser();
   const router = useRouter();
   const [authFailed, setAuthFailed] = useState(false);
 
-  const redirectAuthenticated = useCallback(() => (
-    router.push(`${router.query.from || process.env.NEXT_PUBLIC_AUTHENTICATED_ROUTE}`)
-  ), [router]);
+  const [someState, setSt] = useState(null);
 
-  const handleLogin = useCallback(async (e) => {
+  const redirectAuthenticated = useCallback(() => (
+    router.push(`${router.query.from || process.env.NEXT_PUBLIC_AUTHENTICATED_ROUTE}`)), [router]);
+
+  const handleSignin = useCallback(async (e) => {
     e.preventDefault();
-    const result = await loginWithGoogle();
+    const result = await signinWithGoogle();
     // console.log({ result });
     if (result.auth) {
       setAuthFailed(false);
@@ -24,7 +23,7 @@ function Auth() {
     } else {
       setAuthFailed(true);
     }
-  }, [redirectAuthenticated]);
+  }, [router]);
 
   useEffect(() => {
     console.log({ from: router.query });
@@ -33,72 +32,33 @@ function Auth() {
     }
   }, [user]);
 
-  // if (isError) {
-  //   return (
-  //     <h1>
-  //       Error Happened, SORRY!!!
-  //     </h1>
-  //   );
-  // }
-  if (isLoading) {
+  if (isError) {
     return (
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <CircularProgress />
-      </Grid>
+      <h1>
+        Error Happened, SORRY!!!
+      </h1>
     );
   }
-  // if (!user) {
-  return (
-    <>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-      >
+  if (isLoading) {
+    return <h1>LOADING...........!!! Wait or close the window</h1>;
+  }
+  if (!user) {
+    return (
+      <>
         {
           authFailed
-          && <h1>Authentication failed , please try again</h1>
+            ? <h1>Authentication failed , please try again</h1>
+            : null
         }
-        {
-          isError
-          && (
-            <h1>
-              Error Happened, SORRY!!!
-              <br />
-              Please, try again!
-            </h1>
-          )
-        }
-        {
-          isLoading
-          && <CircularProgress />
-        }
-        {
-          user
-            ? <h1>Redirecting......!!!!!!!</h1>
-            : (
-              <Button
-                type="button"
-                onClick={handleLogin}
-                variant="outlined"
-                color="primary"
-              >
-                <Google />
-                &nbsp;
-                Login With Google
-              </Button>
-            )
-        }
-      </Grid>
-    </>
-  );
-  // }
-  // return <h1>Redirecting......!!!!!!!</h1>;
+        <button type="button" onClick={handleSignin}>
+          Signin With Google
+        </button>
+        <button type="button" onClick={() => setSt(55)}>
+          Sttttttt
+        </button>
+      </>
+    );
+  }
+  return <h1>Redirecting......!!!!!!!</h1>;
 }
-export default Auth;
+export default Signin;

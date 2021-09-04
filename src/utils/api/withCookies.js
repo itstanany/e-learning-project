@@ -1,12 +1,15 @@
 import Cookies from 'cookies';
-import { userCookiesOptions } from '../common/userCookiesOptions';
 
-const withCookies = (handler) => async (req, res) => {
-  const cookies = new Cookies(req, res, userCookiesOptions);
-  return (handler(req, res, { cookies }));
-};
+const keys = [process.env.COOKIE_KEY_ONE];
+
+const withCookies = (handler) => {
+  return async (req, res) => {
+    const cookies = new Cookies(req, res, { keys });
+    return (handler(req, res, { cookies }));
+  }
+}
 
 export default withCookies;
 export {
   withCookies,
-};
+}

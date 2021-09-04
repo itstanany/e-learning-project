@@ -9,6 +9,7 @@
 
 /* eslint-disable react/destructuring-assignment */
 import React, { useCallback, useRef, useState } from 'react';
+import Head from 'next/head';
 // styles
 import { makeStyles } from '@material-ui/core/styles';
 // icons
@@ -21,10 +22,9 @@ import {
 import { Alert } from '../../components/Alert';
 import { InputText, InputNumber } from '../../components/Input';
 // helper utilities
-import { getAllAuthors } from '../api/user/allauthors';
-import { adminEditorAccess } from '../../utils/clientServer/adminEditorAccess';
-import { getUserDoc } from '../api/user/userdoc';
-import { protectPage } from '../../utils/clientServer/protectPage';
+import {
+  getUserDoc, adminEditorAccess, protectPage, getAllAuthors,
+} from '../../utils/server';
 import { apiPost } from '../../utils/client';
 
 const useStyles = makeStyles((theme) => ({
@@ -149,256 +149,263 @@ const AddCourse = (props) => {
     setSnackbarState((prevState) => ({ ...prevState, open: false }));
   }, []);
   return (
-    <Container component="main" maxWidth="lg">
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <AddToQueueIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          New Course
-        </Typography>
-        <form className={classes.form} noValidate name="addCourseForm">
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              {/* Course Title */}
-              <InputText
-                tag={TextField}
-                autoComplete="courseTitle"
-                name="title"
-                variant="outlined"
-                required
-                fullWidth
-                id="title"
-                label="Course Title"
-                autoFocus
-                value={courseInfo.title}
-                someThing={courseInfo.title}
-                onChange={handlerInpChange}
-                key="title"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {/* Course Thumbnail */}
-              <TextField
-                tag={TextField}
-                variant="outlined"
-                required
-                fullWidth
-                type="file"
-                id="thumbnail"
-                key="thumbnail"
-                label="Course Thumbnail"
-                name="thumbnail"
-                autoComplete="thumbnail"
-                onChange={handlerInpChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-            {/* Course Description */}
-            <Grid item xs={12}>
-              <InputText
-                tag={TextField}
-                variant="outlined"
-                multiline
-                minRows={3}
-                required
-                fullWidth
-                id="description"
-                key="description"
-                label="Course Description"
-                name="description"
-                autoComplete="description"
-                value={courseInfo.description}
-                onChange={handlerInpChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              {/* Course Author */}
-              <TextField
-                id="author"
-                key="author"
-                select
-                fullWidth
-                label="Course Author"
-                value={courseInfo.author}
-                SelectProps={{
-                  native: true,
-                }}
-                variant="outlined"
-                name="author"
-                onChange={handlerInpChange}
-                disabled={props.userDoc.role !== 'admin'}
-              >
+    <>
+      <Head>
+        <title>
+          Dashboard
+        </title>
+      </Head>
+      <Container component="main" maxWidth="lg">
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <AddToQueueIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            New Course
+          </Typography>
+          <form className={classes.form} noValidate name="addCourseForm">
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                {/* Course Title */}
+                <InputText
+                  tag={TextField}
+                  autoComplete="courseTitle"
+                  name="title"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="title"
+                  label="Course Title"
+                  autoFocus
+                  value={courseInfo.title}
+                  someThing={courseInfo.title}
+                  onChange={handlerInpChange}
+                  key="title"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {/* Course Thumbnail */}
+                <TextField
+                  tag={TextField}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  type="file"
+                  id="thumbnail"
+                  key="thumbnail"
+                  label="Course Thumbnail"
+                  name="thumbnail"
+                  autoComplete="thumbnail"
+                  onChange={handlerInpChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              {/* Course Description */}
+              <Grid item xs={12}>
+                <InputText
+                  tag={TextField}
+                  variant="outlined"
+                  multiline
+                  minRows={3}
+                  required
+                  fullWidth
+                  id="description"
+                  key="description"
+                  label="Course Description"
+                  name="description"
+                  autoComplete="description"
+                  value={courseInfo.description}
+                  onChange={handlerInpChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                {/* Course Author */}
+                <TextField
+                  id="author"
+                  key="author"
+                  select
+                  fullWidth
+                  label="Course Author"
+                  value={courseInfo.author}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  variant="outlined"
+                  name="author"
+                  onChange={handlerInpChange}
+                  disabled={props.userDoc.role !== 'admin'}
+                >
+                  {
+                    props?.allAuthors
+                    && props.allAuthors.map((option) => (
+                      <option key={option.value} value={option.uid}>
+                        {option.name}
+                      </option>
+                    ))
+                  }
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                {/* Course Price */}
+                <InputNumber
+                  tag={TextField}
+                  variant="outlined"
+                  type="number"
+                  required
+                  fullWidth
+                  id="price"
+                  label="Course Price"
+                  name="price"
+                  autoComplete="number"
+                  value={courseInfo.price}
+                  onChange={handlerInpChange}
+                  key="coursePrice"
+                />
+              </Grid>
+              <Grid xs={12}>
+                <Typography
+                  component="h6"
+                  variant="h6"
+                >
+                  Lectures
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
                 {
-                  props?.allAuthors
-                  && props.allAuthors.map((option) => (
-                    <option key={option.value} value={option.uid}>
-                      {option.name}
-                    </option>
+                  lectures.map((lecture, index) => (
+                    <Grid key={lecture.order} container spacing={2} className={classes.lecture}>
+                      {/* Lecture Entry Subform */}
+                      <Grid item xs={12} sm={6}>
+                        {/* Lecture Title */}
+                        <InputText
+                          tag={TextField}
+                          variant="outlined"
+                          required
+                          fullWidth
+                          id="title"
+                          key="lectureTitle"
+                          label="Lecture Title"
+                          name="title"
+                          autoComplete="title"
+                          value={lecture.title}
+                          onChange={handlerInpChange}
+                          index={index}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        {/* Lecture source */}
+                        <InputNumber
+                          tag={TextField}
+                          type="number"
+                          variant="outlined"
+                          required
+                          fullWidth
+                          id="source"
+                          key="source"
+                          label="Lecture ID"
+                          name="source"
+                          autoComplete="lectureSource"
+                          value={lecture.source}
+                          onChange={handlerInpChange}
+                          index={index}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        {/* Lecture description */}
+                        <InputText
+                          tag={TextField}
+                          variant="outlined"
+                          required
+                          fullWidth
+                          multiline
+                          minRows={3}
+                          id="description"
+                          key="description"
+                          label="Lecture Description"
+                          name="description"
+                          autoComplete="description"
+                          value={lecture.description}
+                          onChange={handlerInpChange}
+                          index={index}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        {/* Lecture Order */}
+                        <InputNumber
+                          tag={TextField}
+                          variant="outlined"
+                          required
+                          fullWidth
+                          type="number"
+                          disabled
+                          id="lectureOrder"
+                          key="lectureOrder"
+                          label="Lecture Order"
+                          name="lectureOrder"
+                          autoComplete="lectureOrder"
+                          value={lecture.order}
+                        />
+                      </Grid>
+                    </Grid>
                   ))
                 }
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              {/* Course Price */}
-              <InputNumber
-                tag={TextField}
-                variant="outlined"
-                type="number"
-                required
-                fullWidth
-                id="price"
-                label="Course Price"
-                name="price"
-                autoComplete="number"
-                value={courseInfo.price}
-                onChange={handlerInpChange}
-                key="coursePrice"
-              />
-            </Grid>
-            <Grid xs={12}>
-              <Typography
-                component="h6"
-                variant="h6"
-              >
-                Lectures
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              {
-                lectures.map((lecture, index) => (
-                  <Grid key={lecture.order} container spacing={2} className={classes.lecture}>
-                    {/* Lecture Entry Subform */}
-                    <Grid item xs={12} sm={6}>
-                      {/* Lecture Title */}
-                      <InputText
-                        tag={TextField}
-                        variant="outlined"
-                        required
-                        fullWidth
-                        id="title"
-                        key="lectureTitle"
-                        label="Lecture Title"
-                        name="title"
-                        autoComplete="title"
-                        value={lecture.title}
-                        onChange={handlerInpChange}
-                        index={index}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      {/* Lecture source */}
-                      <InputNumber
-                        tag={TextField}
-                        type="number"
-                        variant="outlined"
-                        required
-                        fullWidth
-                        id="source"
-                        key="source"
-                        label="Lecture ID"
-                        name="source"
-                        autoComplete="lectureSource"
-                        value={lecture.source}
-                        onChange={handlerInpChange}
-                        index={index}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      {/* Lecture description */}
-                      <InputText
-                        tag={TextField}
-                        variant="outlined"
-                        required
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        id="description"
-                        key="description"
-                        label="Lecture Description"
-                        name="description"
-                        autoComplete="description"
-                        value={lecture.description}
-                        onChange={handlerInpChange}
-                        index={index}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      {/* Lecture Order */}
-                      <InputNumber
-                        tag={TextField}
-                        variant="outlined"
-                        required
-                        fullWidth
-                        type="number"
-                        disabled
-                        id="lectureOrder"
-                        key="lectureOrder"
-                        label="Lecture Order"
-                        name="lectureOrder"
-                        autoComplete="lectureOrder"
-                        value={lecture.order}
-                      />
-                    </Grid>
-                  </Grid>
-                ))
-              }
 
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container spacing={2} direction="column" justifyContent="flex-end">
-            <Grid item xs={8} md={3}>
-              {/* Add new Lecture subform entry */}
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handlerAddNewLect}
-                disabled={isLoading}
-              >
-                Add New Lecture
-              </Button>
+            <Grid container spacing={2} direction="column" justifyContent="flex-end">
+              <Grid item xs={8} md={3}>
+                {/* Add new Lecture subform entry */}
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={handlerAddNewLect}
+                  disabled={isLoading}
+                >
+                  Add New Lecture
+                </Button>
+              </Grid>
+              <Grid item xs={8} md={3}>
+                {/* Submit button */}
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  className={classes.submit}
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                >
+                  Submit
+                  &nbsp;
+                  {
+                    isLoading
+                    && <CircularProgress size="2em" />
+                  }
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={8} md={3}>
-              {/* Submit button */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="secondary"
-                className={classes.submit}
-                onClick={handleSubmit}
-                disabled={isLoading}
-              >
-                Submit
-                &nbsp;
-                {
-                  isLoading
-                  && <CircularProgress size="2em" />
-                }
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      {/* Toast message */}
-      <Snackbar
-        autoHideDuration={6000}
-        open={snackbarState.open}
-        onClose={handlerSnackbarClose}
-      >
-        <Alert
-          severity={snackbarState.severity}
+          </form>
+        </div>
+        {/* Toast message */}
+        <Snackbar
+          autoHideDuration={6000}
+          open={snackbarState.open}
           onClose={handlerSnackbarClose}
         >
-          {
-            snackbarState.message
-          }
-        </Alert>
-      </Snackbar>
-    </Container>
+          <Alert
+            severity={snackbarState.severity}
+            onClose={handlerSnackbarClose}
+          >
+            {
+              snackbarState.message
+            }
+          </Alert>
+        </Snackbar>
+      </Container>
+    </>
     //     )
   );
 };

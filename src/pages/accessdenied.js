@@ -5,6 +5,7 @@ function AccessDenied() {
   return (
     <div>
       Access Denied for the requested page!
+      <br />
       <Link href="/">
         <a>
           Back to Home.

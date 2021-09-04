@@ -1,10 +1,13 @@
+/**
+ * Admin Dashboard placeholder
+ */
 import React from 'react';
-import { protectPage } from '../../utils/clientServer/protectPage';
+import { protectPage } from '../../utils/server';
 
 function Admin() {
   return (
     <div>
-      Admin Placeholder
+      Admin Dashboard Placeholder
     </div>
   );
 }

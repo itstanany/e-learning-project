@@ -17,44 +17,48 @@ const useStyles = makeStyles(styles);
 const AuthNavItem = ({ user, handleDrawerToggle }) => {
   const classes = useStyles();
   const router = useRouter();
+
   const logoutHandler = useCallback(async (e) => {
     auth.signOut();
     fetch('/api/logout');
     handleDrawerToggle(e);
-    router.push('/allcourses');
+    router.push('/courses');
   }, []);
   return (
-    <ListItem className={classes.listItem}>
-      {
-        user
-          ? (
-            <Button
-              color="transparent"
-              className={classes.navLink}
-              onClick={logoutHandler}
-            >
-              <ExitToAppIcon className={classes.icons} />
-              Logout Dr. (
-              {
-                user.displayName
-              }
-              )
-            </Button>
-          )
-          : (
-            <Link href="/auth" passHref>
+    <>
+      <ListItem className={classes.listItem}>
+        {
+          user
+            ? (
               <Button
                 color="transparent"
                 className={classes.navLink}
-                onClick={handleDrawerToggle}
+                onClick={logoutHandler}
               >
-                <LockOpenIcon className={classes.icons} />
-                Login
+                <ExitToAppIcon className={classes.icons} />
+                Logout Dr. (
+                {
+                  user.displayName
+                }
+                )
               </Button>
-            </Link>
-          )
-      }
-    </ListItem>
+            )
+            : (
+              <Link href="/auth" passHref>
+                <Button
+                  color="transparent"
+                  className={classes.navLink}
+                  onClick={handleDrawerToggle}
+                >
+                  <LockOpenIcon className={classes.icons} />
+                  Login
+                </Button>
+              </Link>
+            )
+        }
+      </ListItem>
+
+    </>
   );
 };
 

@@ -42,7 +42,7 @@ const HeaderLinks = ({ handleDrawerToggle }) => {
     <List className={classes.list}>
       {/* All courses page */}
       <ListItem className={classes.listItem}>
-        <Link href="/allcourses" passHref>
+        <Link href="/courses" passHref>
           <Button
             color="transparent"
             className={classes.navLink}
@@ -56,7 +56,7 @@ const HeaderLinks = ({ handleDrawerToggle }) => {
       {/* Dashboard */}
       <ListItem className={classes.listItem}>
         <Link
-          href="/dashboard"
+          href="/user"
           passHref
         >
           <Button

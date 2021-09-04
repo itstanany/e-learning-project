@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect } from 'react';
+import Head from 'next/head';
 import { Layout } from '../components/Layout';
 import '../styles/globals.css';
 
@@ -13,9 +14,16 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      <Head>
+        <title>
+          El-Doctor E-Center
+        </title>
+      </Head>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </>
   );
 }
 
