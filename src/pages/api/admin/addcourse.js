@@ -14,6 +14,7 @@ handler.use(uploadFile);
 
 // save course details in data base
 handler.post(async (req, res) => {
+  console.log('inside add course api');
   try {
     const {
       body: { courseInfo = null, lectures = null, fileLocation = null },

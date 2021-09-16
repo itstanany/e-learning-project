@@ -95,82 +95,82 @@
 
 
 
-        // <Card className={classes.root} key={course.id}>
-          //   <CardActionArea>
-          //     <CardMedia
-          //       component="img"
-          //       alt={course.title}
-          //       // height="140"
-          //       // layout="fill"
-          //       image={course.thumbnail}
-          //       title={course.title}
-          //     />
-          //     <CardContent>
-          //       {/* Course title */}
-          //       <Typography gutterBottom variant="h5" component="h2">
-          //         {
-          //           course.title
-          //         }
-          //       </Typography>
-          //       {/* Course Author */}
-          //       <Typography
-          //         display="block"
-          //         variant="body2"
-          //         color="textSecondary"
-          //         noWrap
-          //         gutterBottom
-          //       >
-          //         {
-          //           course.author
-          //         }
-          //       </Typography>
-          //       {/* Course description */}
-          //       <Typography
-          //         display="block"
-          //         variant="body2"
-          //         color="textSecondary"
-          //         noWrap
-          //       >
-          //         {
-          //           course.description
-          //         }
-          //         {/* <div className={`${styles.text} ${styles.ellipsis}`}>
-          //           <span className={`${styles['text-concat']}`}>
-          //             {
-          //               course.description
-          //             }
-          //           </span>
-          //         </div> */}
-          //         {/* <p className={classes.maxLines}>
-          //           {
-          //             course.description
-          //           }
-          //         </p> */}
-          //       </Typography>
-          //     </CardContent>
-          //   </CardActionArea>
-          //   <CardActions>
-          //     <Link
-          //       href={`/c/${course.id}/${course.slug}`}
-          //       passHref
-          //     >
-          //       <Button
-          //         size="small"
-          //         color="primary"
-          //       >
-          //         Details
-          //       </Button>
-          //     </Link>
-          //     <Link
-          //       href={`/cp/${course.id}`}
-          //       passHref
-          //     >
-          //       <Button size="small" color="primary">
-          //         Watch
-          //       </Button>
-          //     </Link>
-          //   </CardActions>
-          // </Card>
+// <Card className={classes.root} key={course.id}>
+//   <CardActionArea>
+//     <CardMedia
+//       component="img"
+//       alt={course.title}
+//       // height="140"
+//       // layout="fill"
+//       image={course.thumbnail}
+//       title={course.title}
+//     />
+//     <CardContent>
+//       {/* Course title */}
+//       <Typography gutterBottom variant="h5" component="h2">
+//         {
+//           course.title
+//         }
+//       </Typography>
+//       {/* Course Author */}
+//       <Typography
+//         display="block"
+//         variant="body2"
+//         color="textSecondary"
+//         noWrap
+//         gutterBottom
+//       >
+//         {
+//           course.author
+//         }
+//       </Typography>
+//       {/* Course description */}
+//       <Typography
+//         display="block"
+//         variant="body2"
+//         color="textSecondary"
+//         noWrap
+//       >
+//         {
+//           course.description
+//         }
+//         {/* <div className={`${styles.text} ${styles.ellipsis}`}>
+//           <span className={`${styles['text-concat']}`}>
+//             {
+//               course.description
+//             }
+//           </span>
+//         </div> */}
+//         {/* <p className={classes.maxLines}>
+//           {
+//             course.description
+//           }
+//         </p> */}
+//       </Typography>
+//     </CardContent>
+//   </CardActionArea>
+//   <CardActions>
+//     <Link
+//       href={`/c/${course.id}/${course.slug}`}
+//       passHref
+//     >
+//       <Button
+//         size="small"
+//         color="primary"
+//       >
+//         Details
+//       </Button>
+//     </Link>
+//     <Link
+//       href={`/cp/${course.id}`}
+//       passHref
+//     >
+//       <Button size="small" color="primary">
+//         Watch
+//       </Button>
+//     </Link>
+//   </CardActions>
+// </Card>
 
 
 
@@ -245,3 +245,21 @@
 // }
 
 
+
+
+
+
+
+
+{/* <div className={`${styles.text} ${styles.ellipsis}`}>
+            <span className={`${styles['text-concat']}`}>
+              {
+                course.description
+              }
+            </span>
+          </div> */}
+{/* <p className={classes.maxLines}>
+            {
+              course.description
+            }
+          </p> */}

@@ -129,17 +129,21 @@ const AddCourse = (props) => {
     formData.set('courseInfo', JSON.stringify(courseInfo));
     formData.append('lectures', JSON.stringify(lectures));
     formData.append('thumbnail', thumbnail);
-    const result = await apiPost({ route: '/admin/addcourse', body: formData });
-    if (result.added) {
-      setSnackbarState({ open: true, message: 'Addedd Successfully', severity: 'success' });
-      setCourseInfo(initialCourseState.current);
-      lectureOrder.current = 1;
-      setLectures(initialLectureState);
+    try {
+      const result = await apiPost({ route: '/admin/addcourse', body: formData });
+      if (result.added) {
+        setSnackbarState({ open: true, message: 'Addedd Successfully', severity: 'success' });
+        setCourseInfo(initialCourseState.current);
+        lectureOrder.current = 1;
+        setLectures(initialLectureState);
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(false);
-      return;
+      setSnackbarState({ open: true, message: 'Failed to Added. Try again', severity: 'error' });
+    } catch (error) {
+      console.error({ error });
     }
-    setIsLoading(false);
-    setSnackbarState({ open: true, message: 'Failed to Added. Try again', severity: 'error' });
   }, [courseInfo, lectures, thumbnail]);
 
   const handlerSnackbarClose = useCallback(() => {

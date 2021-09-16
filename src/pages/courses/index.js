@@ -1,4 +1,3 @@
-import React from 'react';
 import Head from 'next/head';
 import {
   Grid,
@@ -19,11 +18,16 @@ function AllCourses({ courses = [] }) {
           All Courses
         </title>
       </Head>
-      <Grid container xs={12} spacing={3} alignContent="center">
+      <Grid container spacing={3}>
         {
-          courses.map((course) => (
-            <CourseCard course={course} key={course.id} user={user} />
-          ))
+          courses.map((course) => {
+            const subscribed = (user?.subscription?.includes(course?.id));
+            return (
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <CourseCard course={course} key={course.id} subscribed={subscribed} />
+              </Grid>
+            );
+          })
         }
       </Grid>
     </>
@@ -39,5 +43,6 @@ export const getStaticProps = async () => {
     props: {
       courses,
     },
+    revalidate: 5,
   };
 };
