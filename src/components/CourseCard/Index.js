@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/*  */
+
 import Link from 'next/link';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -30,11 +31,7 @@ const useStyles = makeStyles({
   },
 });
 
-function CourseCard({ course, user }) {
-  const [subscribed, setSubscribed] = useState(user?.subscription?.includes(course?.id));
-  useEffect(() => {
-    setSubscribed(user?.subscription?.includes(course?.id));
-  }, [user, course]);
+function CourseCard({ course, subscribed }) {
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -112,7 +109,7 @@ function CourseCard({ course, user }) {
         >
           <Button size="small" color="primary">
             {
-              user?.subscription?.includes(course?.id)
+              subscribed
                 ? 'Watch'
                 : `Enroll (${course.price}) L.E`
             }
@@ -120,7 +117,6 @@ function CourseCard({ course, user }) {
         </Link>
       </CardActions>
     </Card>
-
   );
 }
 
