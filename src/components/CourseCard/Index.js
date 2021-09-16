@@ -1,6 +1,9 @@
-/*  */
+/*
+  * Presentational component to render a course card
+*/
 
 import Link from 'next/link';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Card, CardActionArea, CardMedia, Typography, CardContent, Button,
@@ -124,4 +127,23 @@ export default CourseCard;
 
 export {
   CourseCard,
+};
+
+CourseCard.propTypes = {
+  course: PropTypes.shape({
+    author: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    id: PropTypes.string,
+    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    slug: PropTypes.string.isRequired,
+    thumbnail: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    lectures: PropTypes.arrayOf(PropTypes.shape({
+      description: PropTypes.string,
+      order: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      source: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+    })),
+  }).isRequired,
+  subscribed: PropTypes.bool.isRequired,
 };
