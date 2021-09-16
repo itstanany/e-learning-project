@@ -1,4 +1,4 @@
-module.exports = withPWA({
+module.exports = {
   reactStrictMode: true,
   images: {
     domains: ['firebasestorage.googleapis.com'],
@@ -8,4 +8,4 @@ module.exports = withPWA({
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-});
+};
