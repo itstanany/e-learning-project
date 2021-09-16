@@ -53,7 +53,6 @@ function CourseCard({ course, subscribed }) {
             width="140"
             image={course.thumbnail}
             title={course.title}
-            objectFit="fit"
             className={classes.cardMedia}
           />
           <CardContent>
