@@ -5,12 +5,15 @@ import {
   Card, CardActionArea, CardMedia, Typography, CardContent, Button,
   CardActions,
 } from '@material-ui/core';
-import { useUser } from '../../customHooks';
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 345,
-    margin: '5px',
+    // make all cards the same height of tallest card of the row and fill width of container
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexFlow: 'column wrap',
+    justifyContent: 'space-between',
   },
   mediaStyle: {
     display: 'block',
@@ -19,36 +22,30 @@ const useStyles = makeStyles({
     width: '100%',
     height: 'auto',
   },
+  cardActionArea: {
+    flexGrow: 3,
+  },
+  cardMedia: {
+    objectFit: 'fill',
+  },
 });
 
 function CourseCard({ course, user }) {
   const [subscribed, setSubscribed] = useState(user?.subscription?.includes(course?.id));
   useEffect(() => {
-    setSubscribed(user?.subscription?.includes(course?.id))
+    setSubscribed(user?.subscription?.includes(course?.id));
   }, [user, course]);
-  // const [user, setUser] = useState(null);
-  // useEffect(() => {
-  //   const getUser = async () => {
-  //     const result = await fetch('/api/user/userdoc').then((res) => res.json());
-  //     setUser(result?.userDoc);
-  //   };
-  //   getUser();
-  // }, []);
-  // const { user } = useUser();
   const classes = useStyles();
-  console.log('DASHBOARD');
-  console.log({ user });
   return (
     <Card className={classes.root}>
       <Link
         href={
-          // user?.subscription?.includes(course?.id)
           subscribed
             ? `/courses/${course.id}/${course.slug}/player`
             : `/courses/${course.id}/${course.slug}/enroll`
         }
       >
-        <CardActionArea>
+        <CardActionArea className={classes.cardActionArea}>
           <CardMedia
             component="img"
             alt={course.title}
@@ -56,6 +53,8 @@ function CourseCard({ course, user }) {
             width="140"
             image={course.thumbnail}
             title={course.title}
+            objectFit="fit"
+            className={classes.cardMedia}
           />
           <CardContent>
             {/* Course title */}
@@ -86,22 +85,11 @@ function CourseCard({ course, user }) {
               {
                 course.description
               }
-              {/* <div className={`${styles.text} ${styles.ellipsis}`}>
-            <span className={`${styles['text-concat']}`}>
-              {
-                course.description
-              }
-            </span>
-          </div> */}
-              {/* <p className={classes.maxLines}>
-            {
-              course.description
-            }
-          </p> */}
             </Typography>
           </CardContent>
         </CardActionArea>
       </Link>
+      {/* Card controller */}
       <CardActions>
         <Link
           href={`/courses/${course.id}/${course.slug}`}
@@ -116,7 +104,6 @@ function CourseCard({ course, user }) {
         </Link>
         <Link
           href={
-            // user?.subscription?.includes(course?.id)
             subscribed
               ? `/courses/${course.id}/${course.slug}/player`
               : `/courses/${course.id}/${course.slug}/enroll`
