@@ -17,7 +17,7 @@ import AddToQueueIcon from '@material-ui/icons/AddToQueue';
 // components
 import {
   CircularProgress, Snackbar, Container, Typography, Grid, TextField,
-  Button, Avatar,
+  Button, Avatar, FormControl, InputLabel, Select, MenuItem,
 } from '@material-ui/core';
 import { Alert } from '../../components/Alert';
 import { InputText, InputNumber } from '../../components/Input';
@@ -54,14 +54,42 @@ const useStyles = makeStyles((theme) => ({
     margin: '5px 0px',
     padding: '5px',
   },
+  formControl: {
+    width: '100%',
+  },
 }));
+
+const initialResource = {
+  type: 'video',
+  src: '',
+};
 
 const initialLectureState = [{
   title: '',
-  source: '',
+  resources: [initialResource],
   description: '',
   order: 1,
 }];
+
+const lectureResourceTypes = [
+  { render: 'Video', value: 'video' },
+  { render: 'Text', value: 'text' },
+  { render: 'PDF', value: 'pdf' },
+  { render: 'Photo', value: 'photo' },
+  { render: 'Audio', value: 'audio' },
+];
+
+
+
+const MenuItems = ({ items }) => (items.map((item) => (
+  <MenuItem value={item.value}>
+    {
+      item.render
+    }
+  </MenuItem>
+)));
+
+const SourceMenuItems = MenuItems({ items: lectureResourceTypes });
 
 const AddCourse = (props) => {
   const classes = useStyles();
@@ -85,23 +113,43 @@ const AddCourse = (props) => {
   // loading during submitting
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlerInpChange = useCallback((e, { index, value: unformattedValue } = {}) => {
+  const handlerInpChange = useCallback((e, { index, value: unformattedValue, resIndex } = {}) => {
     /**
    * Handle input change
    * @param e => input change html event
    * @param index => number, index of changed lecture in lectures array
    * @param value: unformattedValue => value either string or number value
+   * @param resIndex: number, index of resource object
    */
-    const { target: { value, name } } = e;
+    const { target: { value: eValue, name } } = e;
+    const value = unformattedValue !== undefined ? unformattedValue : eValue;
+    // input is a course info property
     if (index === undefined) {
       if (name === 'thumbnail') return setThumbnail(e.target.files[0]);
-      return setCourseInfo((prevState) => ({ ...prevState, [name]: unformattedValue || value }));
+      return setCourseInfo((prevState) => ({ ...prevState, [name]: value }));
     }
+    // input is a resource entry of a specific lecture
+    if (resIndex !== undefined) {
+      return setLectures((prevSt) => {
+        const newState = [...prevSt];
+        const newLect = {
+          ...newState[index],
+          resources: [...newState[index].resources],
+        };
+        newLect.resources[resIndex] = {
+          ...newLect.resources[resIndex],
+          [name]: value,
+        };
+        newState[index] = newLect;
+        return newState;
+      });
+    }
+    // update a lecture info prop
     return setLectures((prevState) => {
       const newState = [...prevState];
       newState[index] = {
         ...newState[index],
-        [name]: unformattedValue || value,
+        [name]: value,
       };
       return newState;
     });
@@ -117,6 +165,15 @@ const AddCourse = (props) => {
       order: lectureOrder.current,
     }]));
   }, [lectureOrder]);
+
+  const handlerAddNewRes = useCallback((e, { index } = {}) => (
+    setLectures((prevSt) => {
+      const newState = [...prevSt];
+      // newState[index].resources.push(initialResource);
+      newState[index].resources = [...newState[index].resources, initialResource];
+      return newState;
+    })
+  ), []);
 
   const handleSubmit = useCallback(async (e) => {
     /**
@@ -169,8 +226,8 @@ const AddCourse = (props) => {
           </Typography>
           <form className={classes.form} noValidate name="addCourseForm">
             <Grid container spacing={2}>
+              {/* Course Title */}
               <Grid item xs={12} sm={6}>
-                {/* Course Title */}
                 <InputText
                   tag={TextField}
                   autoComplete="courseTitle"
@@ -187,8 +244,8 @@ const AddCourse = (props) => {
                   key="title"
                 />
               </Grid>
+              {/* Course Thumbnail */}
               <Grid item xs={12} sm={6}>
-                {/* Course Thumbnail */}
                 <TextField
                   tag={TextField}
                   variant="outlined"
@@ -224,8 +281,8 @@ const AddCourse = (props) => {
                   onChange={handlerInpChange}
                 />
               </Grid>
+              {/* Course Author */}
               <Grid item xs={12} md={3}>
-                {/* Course Author */}
                 <TextField
                   id="author"
                   key="author"
@@ -251,8 +308,8 @@ const AddCourse = (props) => {
                   }
                 </TextField>
               </Grid>
+              {/* Course Price */}
               <Grid item xs={12} md={3}>
-                {/* Course Price */}
                 <InputNumber
                   tag={TextField}
                   variant="outlined"
@@ -268,6 +325,7 @@ const AddCourse = (props) => {
                   key="coursePrice"
                 />
               </Grid>
+              {/* Lectures */}
               <Grid xs={12}>
                 <Typography
                   component="h6"
@@ -276,13 +334,15 @@ const AddCourse = (props) => {
                   Lectures
                 </Typography>
               </Grid>
+
               <Grid item xs={12}>
                 {
                   lectures.map((lecture, index) => (
                     <Grid key={lecture.order} container spacing={2} className={classes.lecture}>
-                      {/* Lecture Entry Subform */}
+                      {/* Lecture Entry Sub-form */}
+
+                      {/* Lecture Title */}
                       <Grid item xs={12} sm={6}>
-                        {/* Lecture Title */}
                         <InputText
                           tag={TextField}
                           variant="outlined"
@@ -295,48 +355,17 @@ const AddCourse = (props) => {
                           autoComplete="title"
                           value={lecture.title}
                           onChange={handlerInpChange}
-                          index={index}
+                          onChangeProps={
+                            {
+                              index,
+                            }
+                          }
+                        // index={index}
                         />
                       </Grid>
+
+                      {/* Lecture Order */}
                       <Grid item xs={12} sm={6}>
-                        {/* Lecture source */}
-                        <InputNumber
-                          tag={TextField}
-                          type="number"
-                          variant="outlined"
-                          required
-                          fullWidth
-                          id="source"
-                          key="source"
-                          label="Lecture ID"
-                          name="source"
-                          autoComplete="lectureSource"
-                          value={lecture.source}
-                          onChange={handlerInpChange}
-                          index={index}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        {/* Lecture description */}
-                        <InputText
-                          tag={TextField}
-                          variant="outlined"
-                          required
-                          fullWidth
-                          multiline
-                          minRows={3}
-                          id="description"
-                          key="description"
-                          label="Lecture Description"
-                          name="description"
-                          autoComplete="description"
-                          value={lecture.description}
-                          onChange={handlerInpChange}
-                          index={index}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        {/* Lecture Order */}
                         <InputNumber
                           tag={TextField}
                           variant="outlined"
@@ -351,6 +380,106 @@ const AddCourse = (props) => {
                           autoComplete="lectureOrder"
                           value={lecture.order}
                         />
+                      </Grid>
+                      {/* Lecture description */}
+                      <Grid item xs={12} sm={6}>
+                        <InputText
+                          tag={TextField}
+                          variant="outlined"
+                          required
+                          fullWidth
+                          multiline
+                          minRows={3}
+                          id="description"
+                          key="description"
+                          label="Lecture Description"
+                          name="description"
+                          autoComplete="description"
+                          value={lecture.description}
+                          onChange={handlerInpChange}
+                          onChangeProps={
+                            {
+                              index,
+                            }
+                          }
+                        // index={index}
+                        />
+                      </Grid>
+
+                      {/* Lecture resources */}
+                      <Grid item xs={12} sm={6}>
+                        <Grid
+                          container
+                          spacing={2}
+                          justifyContent="space-between"
+                        >
+                          {
+                            lecture.resources?.map((res, resIdx) => (
+                              <>
+                                <Grid
+                                  item
+                                  xs={6}
+                                >
+                                  <InputText
+                                    tag={TextField}
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="source"
+                                    key="source"
+                                    label="Lecture Resource"
+                                    name="src"
+                                    autoComplete="lectureSource"
+                                    value={res?.src}
+                                    onChange={handlerInpChange}
+                                    onChangeProps={
+                                      {
+                                        index,
+                                        resIndex: resIdx,
+                                      }
+                                    }
+                                  />
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={6}
+                                >
+                                  <FormControl
+                                    className={classes.formControl}
+                                  >
+                                    <InputLabel id="resourceTypeLabel">Resource Type</InputLabel>
+                                    <Select
+                                      labelId="resourceTypeLabel"
+                                      id="resourceTypeInput"
+                                      value={res?.type}
+                                      name="type"
+                                      onChange={(e) => (
+                                        handlerInpChange(e, { index, resIndex: resIdx })
+                                      )}
+                                    >
+                                      {
+                                        SourceMenuItems
+                                      }
+                                    </Select>
+                                  </FormControl>
+                                </Grid>
+                              </>
+                            ))
+                          }
+                          <Grid
+                            item
+                            xs={12}
+                          >
+                            <Button
+                              onClick={(e) => handlerAddNewRes(e, { index })}
+                              variant="contained"
+                              color="primary"
+                              fullWidth
+                            >
+                              Add New Resource
+                            </Button>
+                          </Grid>
+                        </Grid>
                       </Grid>
                     </Grid>
                   ))
