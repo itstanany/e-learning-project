@@ -2,6 +2,12 @@
  * Course Details Page
  */
 
+/**
+ * Required
+ * add lecture number
+ * centering lecture list
+ */
+
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/dist/client/router';
@@ -17,22 +23,16 @@ import { useUser } from '../../../../customHooks';
 import { Loader } from '../../../../components/Loader';
 
 const useStyles = makeStyles({
-  root: {
-    minWidth: 275,
-  },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
   lectures: {
-    margin: '0px auto',
+    marginTop: '15px',
+  },
+  btn: {
+    // action btn at end of list item and center vertically of title height
+    display: 'flex',
+    justifyContent: 'flex-end',
+    height: '100%',
+    alignItems: 'center',
+    alignContent: 'center',
   },
 });
 
@@ -49,6 +49,7 @@ const CourseDetails = ({ course, lectures }) => {
 
   return (
     <>
+
       <Head>
         {/* Page title */}
         <title>
@@ -57,85 +58,142 @@ const CourseDetails = ({ course, lectures }) => {
           }
         </title>
       </Head>
+
+      {/* Course Info */}
       <Grid container spacing={2}>
-        <Grid item xs={12} md={3}>
+
+        {/* Course Thumbnail */}
+        <Grid
+          item
+          xs={12}
+          sm={3}
+        >
           <CardMedia
             component="img"
             alt={course.title}
-            // height="140"
-            // layout="fill"
             image={course.thumbnail}
             title={course.title}
           />
-          {/* <div
-          style={{ display: 'block' }}
-        >
-          <Image
-            src={course?.thumbnail}
-            layout="responsive"
-            objectFit
-            width={700}
-            height={475}
-          />
-        </div> */}
         </Grid>
-        <Grid item xs={12} md={9}>
+
+        {/* Course Details */}
+        <Grid
+          item
+          xs={12}
+          sm={9}
+        >
           {/* Course Details */}
-          <Typography variant="h3" component="h2">
+          <Typography
+            variant="h3"
+            component="h2"
+          >
             {
               course.title
             }
           </Typography>
-          <Typography className={classes.pos} color="textSecondary">
+
+          <Typography
+            className={classes.pos}
+            color="textSecondary"
+            gutterBottom
+          >
             {
               course.author
             }
           </Typography>
-          <Typography className={classes.pos} color="textSecondary">
+
+          <Typography
+            className={classes.pos}
+            color="textSecondary"
+            gutterBottom
+          >
             {
               course.price
             }
             &nbsp;
             L.E
           </Typography>
-          <Typography variant="body2" component="p">
+
+          <Typography
+            variant="body2"
+            component="p"
+          >
             {
               course?.description
             }
           </Typography>
         </Grid>
-        {/* Lectures List */}
+      </Grid>
+
+      {/* Lectures List */}
+      <Grid
+        container
+        justifyContent="center"
+        className={classes.lectures}
+      >
         <Grid
           item
           xs={12}
-          md={6}
-          className={classes.lectures}
         >
-          <Typography
-            variant="h3"
-            component="h6"
+          <Grid
+            container
+            justifyContent="center"
           >
-            Lectures
-          </Typography>
+            <Typography
+              variant="h3"
+              component="h6"
+            >
+              Lectures
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          sm={9}
+          md={6}
+        >
           <List>
             {
               lectures?.map((lect) => (
+                // Lecture Info
                 <ListItem>
-                  <ListItemIcon>
-                    <YouTubeIcon />
-                  </ListItemIcon>
                   <Grid
                     justify="space-between"
                     container
-                    spacing={24}
+                    wrap="wrap"
                   >
                     <Grid item xs={9}>
-                      <ListItemText
-                        primary={lect?.title}
-                      />
+                      <Grid
+                        container
+                        alignItems="center"
+                        alignContent="center"
+                        justifyContent="flex-start"
+                        direction="row"
+                        wrap="nowrap"
+
+                      >
+                        {/* lecture Icon */}
+                        <ListItemIcon>
+                          <YouTubeIcon />
+                        </ListItemIcon>
+                        {/* Lecture title */}
+                        <ListItemText
+                          primary={`Lecture ${lect?.order} - ${lect?.title}`}
+                        />
+                      </Grid>
+
                     </Grid>
-                    <Grid item xs={3}>
-                      <ListItemText>
+
+                    <Grid
+                      item
+                      xs={3}
+                    >
+
+                      <div
+                        className={classes.btn}
+                      >
                         <Link
                           href={
                             subscribed
@@ -155,7 +213,8 @@ const CourseDetails = ({ course, lectures }) => {
                             }
                           </Button>
                         </Link>
-                      </ListItemText>
+
+                      </div>
                     </Grid>
                   </Grid>
                 </ListItem>
@@ -164,6 +223,7 @@ const CourseDetails = ({ course, lectures }) => {
           </List>
         </Grid>
       </Grid>
+
     </>
   );
 };
