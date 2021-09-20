@@ -8,19 +8,19 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import YouTubeIcon from '@material-ui/icons/YouTube';
+import { CastForEducationOutlined } from '@material-ui/icons';
 import { useRouter } from 'next/router';
 import { Grid, ListSubheader } from '@material-ui/core';
 import { Loader } from '../Loader';
-import { apiPost } from '../../utils/client';
+import { fetchLectRes } from '../../utils/client';
 import { CourseNotFound } from '../CourseNotFound';
-
-const fetchLectRes = ({ cId, lId }) => (apiPost({ url: 'courses/course/lectures/lecture/res', body: { lId, cId } }));
+import { NotAuthorized } from './NotAuthorized';
+import { ErrorPage } from './Error';
 
 const useStyles = makeStyles((theme) => ({
   listGrid: {
     order: 1,
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       order: 200,
     },
   },
@@ -33,13 +33,15 @@ const useStyles = makeStyles((theme) => ({
   },
   videoPlayerGrid: {
     order: 2,
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       order: 1,
     },
   },
   iframeContainer: {
+    // preserve aspect ratio
     padding: '56.25% 0 0 0',
     position: 'relative',
+    width: '100%',
   },
   iframe: {
     position: 'absolute',
@@ -65,14 +67,10 @@ const CoursePlayer = ({ course/* : staticBuildCourse */, lectures/* : staticBuil
   const classes = useStyles();
   const router = useRouter();
   const [loadingResource, setLoadingResource] = useState(true);
-  // const [course, setCourse] = useState(staticBuildCourse);
-  // const [lectures, setLectures] = useState(staticBuildLectures);
-  const [resources, setResources] = useState(null);
   const [error, setError] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
-  const [notAuthenticated, setNotAuthenticated] = useState(false);
-  console.log('router.query');
-  console.log({ ...router.query })
+  // console.log('router.query');
+  // console.log({ ...router.query })
   // useEffect(() => {
   //   // retry to fetch data if they aren't supplied by static build
   //   if (!(staticBuildCourse && staticBuildLectures)) {
@@ -160,7 +158,7 @@ const CoursePlayer = ({ course/* : staticBuildCourse */, lectures/* : staticBuil
             if (resError === 'not authenticated' || resError === 'not authorized') {
               return setNotAuthorized(true);
             }
-            setResources(responseResources);
+            // setResources(responseResources);
             selected.res = responseResources;
             return setSelectedLecture(selected);
           })
@@ -171,59 +169,68 @@ const CoursePlayer = ({ course/* : staticBuildCourse */, lectures/* : staticBuil
     }
   }, [router?.query?.lecture, router?.query?.cid, lectures]);
 
-  // if (router.isFallback) {
-  //   console.log('fallback');
-  //   console.log('router.query');
-  //   console.log({ ...router.query });
-  //   return <Loader />;
-  // } else {
-  //   console.log('out of fallback');
-  // }
 
   const renderResource = useCallback(
     // eslint-disable-next-line arrow-body-style
     () => {
-      console.log({ selectedLecture });
       return (
         <>
           {
             notAuthorized
+              // false
               ? (
-                <h1>You are not authorized</h1>
+                <NotAuthorized />
               )
               : null
           }
           {
             error
-              ? <h1>Something went wrong, please try again</h1>
+              // false
+              ? <ErrorPage />
               : null
           }
           {
             loadingResource
-              ? <Loader />
+              // true
+              ? (
+
+                <Loader />
+
+              )
               : null
           }
           {
-            selectedLecture?.res?.length > 0
+            selectedLecture?.res?.length > 0 && !loadingResource
+              // false
               ? (
-                <div className={classes.iframeContainer}>
-                  <iframe
-                    src={
-                      `https://www.youtube.com/embed/${selectedLecture?.res?.[0].src}`
-                    }
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    frameBorder="0"
-                    allowFullScreen
-                    // title={
-                    //   ((lectures.find((lect) => lect.id === router.query.lecture))?.title)
-                    //   || lectures[0]?.title
-                    // }
-                    title={
-                      selectLecture?.title
-                    }
-                    className={classes.iframe}
-                  />
-                </div>
+                selectedLecture?.res?.map((res) => {
+                  switch (res.type) {
+                    case 'video':
+                      return (
+                        <div className={classes.iframeContainer}>
+                          <iframe
+                            src={
+                              // `https://www.youtube.com/embed/${selectedLecture?.res?.[0].src}`
+                              `https://www.youtube.com/embed/${res.src}`
+                            }
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            frameBorder="0"
+                            allowFullScreen
+                            title={
+                              selectLecture?.title
+                            }
+                            className={classes.iframe}
+                          />
+                        </div>
+                      );
+
+                    case 'text':
+                      return res.src;
+
+                    default:
+                      return null;
+                  }
+                })
               )
               : null
           }
@@ -286,11 +293,10 @@ const CoursePlayer = ({ course/* : staticBuildCourse */, lectures/* : staticBuil
                         onClick={(e) => handleListItemClick(e, { lectureId: lecture.id })}
                       >
                         <ListItemIcon>
-                          <YouTubeIcon />
+                          <CastForEducationOutlined />
                         </ListItemIcon>
                         <ListItemText primary={`Lecture<${lecture.order}> ${lecture?.title}`} />
                       </ListItem>
-
                     ))
                   }
                 </List>
@@ -303,9 +309,17 @@ const CoursePlayer = ({ course/* : staticBuildCourse */, lectures/* : staticBuil
               className={classes.videoPlayerGrid}
               item
             >
-              {
-                renderResource()
-              }
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                alignContent="center"
+                style={{ minHeight: '100%', minWidth: '100%' }}
+              >
+                {
+                  renderResource()
+                }
+              </Grid>
             </Grid>
           </Grid>
         </>
