@@ -17,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
   main: {
     marginTop: theme.spacing(12),
     marginBottom: theme.spacing(2),
+    // make main content occupy all remaining height
+    flexGrow: 55,
   },
   footer: {
     padding: theme.spacing(3, 2),
