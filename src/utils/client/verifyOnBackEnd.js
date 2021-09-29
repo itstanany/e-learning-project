@@ -1,4 +1,4 @@
-const verifyOnBackend = ({ idToken, isNewUser }) => fetch('/api/login', {
+const verifyOnBackend = ({ idToken, isNewUser }) => fetch('/api/auth/login', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

@@ -13,3 +13,5 @@ export * from './withCookies';
 export * from './createUserDocument';
 export * from './saveCourseInfo';
 export * from './getAllAuthors';
+export * from './getResources';
+export * from './isAuth';

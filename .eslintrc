@@ -3,7 +3,8 @@
     // "next",
     // "next/core-web-vitals",
     "airbnb",
-    "airbnb-base"
+    "airbnb-base",
+    "airbnb/hooks"
   ],
   "rules": {
     "react/jsx-props-no-spreading": "off",

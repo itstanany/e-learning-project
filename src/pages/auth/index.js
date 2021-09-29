@@ -12,6 +12,7 @@ import { loginWithGoogle } from '../../firebase/client';
 import { useUser } from '../../customHooks/useUser';
 
 const Auth = () => {
+  // todo refactor use user to work with auth middleware on hte back-end
   const { user, isLoading, isError } = useUser();
   const router = useRouter();
   const [authFailed, setAuthFailed] = useState(false);
@@ -23,7 +24,6 @@ const Auth = () => {
   const handleLogin = useCallback(async (e) => {
     e.preventDefault();
     const result = await loginWithGoogle();
-    // console.log({ result });
     if (result.auth) {
       setAuthFailed(false);
       redirectAuthenticated();

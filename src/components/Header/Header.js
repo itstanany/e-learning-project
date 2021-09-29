@@ -1,3 +1,5 @@
+// todo fix the distribution effect of opening and closing select menu in add course form
+
 /* eslint-disable react/require-default-props */
 import React/* , { useEffect, useState }  */ from 'react';
 import Link from 'next/link';

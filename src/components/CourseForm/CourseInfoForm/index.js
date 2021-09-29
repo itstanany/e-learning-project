@@ -1,3 +1,7 @@
+/**
+ * Form to render course information
+ * presentational component
+ */
 import {
   Button, Grid, MenuItem, TextField, Typography,
 } from '@material-ui/core';
@@ -40,7 +44,6 @@ const ThumbnailGallery = ({ src, deleteHandler }) => (
       <Button
         onClick={deleteHandler}
         variant="outlined"
-        // style={{ color: '#e3e3e3', backgroundColor: '#fa0909' }}
         color="secondary"
       >
         Delete
@@ -103,10 +106,6 @@ function CourseInfoForm({
           fullWidth
           label="Course Author"
           value={author || ''}
-          // make them active from start, using default value
-          // SelectProps={{
-          //   native: true,
-          // }}
           variant="outlined"
           name="author"
           onChange={handlerInpChange}
@@ -178,11 +177,13 @@ function CourseInfoForm({
             )
             : (
               <TextField
-                tag={TextField}
                 variant="outlined"
                 required
                 fullWidth
                 type="file"
+                inputProps={{
+                  accept: 'image/*',
+                }}
                 id="thumbnail"
                 key="thumbnail"
                 label="Course Thumbnail"

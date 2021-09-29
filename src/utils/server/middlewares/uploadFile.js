@@ -1,4 +1,5 @@
 import { adminBucket } from '../../../firebase/admin/adminFirestorage';
+import { bypassThumbnailUpload } from '../bypassThumbnailUpload';
 
 /**
  * Save the file into google firebase storage
@@ -30,7 +31,8 @@ const uploadFile = (req, res, next) => {
     // When there is no more data to be consumed from the stream
     blobWriter.end(req.file.buffer);
   } catch (error) {
-    res.status(400).json({ error: `Error, could not upload file: ${error.message}` });
+    if (bypassThumbnailUpload({ req })) return next();
+    return res.status(400).json({ error: `Error, could not upload file: ${error.message}` });
   }
 };
 

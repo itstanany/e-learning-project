@@ -16,7 +16,7 @@ import {
   CardMedia, Grid, List, ListItem, ListItemIcon, ListItemText, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import YouTubeIcon from '@material-ui/icons/YouTube';
+import { CastForEducation } from '@material-ui/icons';
 import Link from 'next/link';
 import { getAllcourses, getCourse, getLectures } from '../../../../utils/server';
 import { useUser } from '../../../../customHooks';
@@ -158,7 +158,9 @@ const CourseDetails = ({ course, lectures }) => {
             {
               lectures?.map((lect) => (
                 // Lecture Info
-                <ListItem>
+                <ListItem
+                  key={lect?.id}
+                >
                   <Grid
                     justify="space-between"
                     container
@@ -176,7 +178,7 @@ const CourseDetails = ({ course, lectures }) => {
                       >
                         {/* lecture Icon */}
                         <ListItemIcon>
-                          <YouTubeIcon />
+                          <CastForEducation />
                         </ListItemIcon>
                         {/* Lecture title */}
                         <ListItemText

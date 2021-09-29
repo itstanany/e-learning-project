@@ -2,16 +2,17 @@
  * Admin Dashboard placeholder
  */
 import React from 'react';
-import { protectPage } from '../../utils/server';
+import { AdminDashboard } from '../../components/AdminDashboard';
+// import { adminEditorAccess, protectPage } from '../../utils/server';
 
 function Admin() {
   return (
-    <div>
-      Admin Dashboard Placeholder
-    </div>
+    <AdminDashboard />
   );
 }
 
-export const getServerSideProps = protectPage(() => ({ props: {} }));
+// const getSSProps = () => ({ props: {} });
+
+// export const getServerSideProps = protectPage(adminEditorAccess(getSSProps));
 
 export default (Admin);

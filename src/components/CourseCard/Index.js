@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   Card, CardActionArea, CardMedia, Typography, CardContent, Button,
   CardActions,
+  Grid,
 } from '@material-ui/core';
 
 const useStyles = makeStyles({
@@ -45,48 +46,63 @@ function CourseCard({ course, subscribed }) {
             : `/courses/${course.id}/${course.slug}/enroll`
         }
       >
+
         <CardActionArea className={classes.cardActionArea}>
-          <CardMedia
-            component="img"
-            alt={course.title}
-            height="140"
-            width="140"
-            image={course.thumbnail}
-            title={course.title}
-            className={classes.cardMedia}
-          />
-          <CardContent>
-            {/* Course title */}
-            <Typography gutterBottom variant="h5" component="h2">
-              {
-                course.title
-              }
-            </Typography>
-            {/* Course Author */}
-            <Typography
-              display="block"
-              variant="body2"
-              color="textSecondary"
-              noWrap
-              gutterBottom
-            >
-              {
-                course.author
-              }
-            </Typography>
-            {/* Course description */}
-            <Typography
-              display="block"
-              variant="body2"
-              color="textSecondary"
-              noWrap
-            >
-              {
-                course.description
-              }
-            </Typography>
-          </CardContent>
+          {/* make course info occupies all remaining height */}
+          <Grid
+            container
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            alignContent="flex-start"
+            style={{ height: '100%' }}
+          >
+            <Grid item xs={12}>
+              <CardMedia
+                component="img"
+                alt={course.title}
+                height="140"
+                width="140"
+                image={course.thumbnail}
+                title={course.title}
+                className={classes.cardMedia}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CardContent>
+                {/* Course title */}
+                <Typography gutterBottom variant="h5" component="h2">
+                  {
+                    course.title
+                  }
+                </Typography>
+                {/* Course Author */}
+                <Typography
+                  display="block"
+                  variant="body2"
+                  color="textSecondary"
+                  noWrap
+                  gutterBottom
+                >
+                  {
+                    course.author
+                  }
+                </Typography>
+                {/* Course description */}
+                <Typography
+                  display="block"
+                  variant="body2"
+                  color="textSecondary"
+                  noWrap
+                >
+                  {
+                    course.description
+                  }
+                </Typography>
+              </CardContent>
+            </Grid>
+          </Grid>
         </CardActionArea>
+
       </Link>
       {/* Card controller */}
       <CardActions>
@@ -127,6 +143,9 @@ export default CourseCard;
 export {
   CourseCard,
 };
+CourseCard.defaultProps = {
+  subscribed: false,
+};
 
 CourseCard.propTypes = {
   course: PropTypes.shape({
@@ -137,12 +156,12 @@ CourseCard.propTypes = {
     slug: PropTypes.string.isRequired,
     thumbnail: PropTypes.string,
     title: PropTypes.string.isRequired,
-    lectures: PropTypes.arrayOf(PropTypes.shape({
-      description: PropTypes.string,
-      order: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      source: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-    })),
+    // lectures: PropTypes.arrayOf(PropTypes.shape({
+    //   description: PropTypes.string,
+    //   order: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    //   source: PropTypes.string.isRequired,
+    //   title: PropTypes.string.isRequired,
+    // })),
   }).isRequired,
-  subscribed: PropTypes.bool.isRequired,
+  subscribed: PropTypes.bool,
 };

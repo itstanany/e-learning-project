@@ -5,3 +5,11 @@ export {
 export {
   CourseEditForm,
 } from './CourseEditForm';
+
+export {
+  CourseInfoForm,
+} from './CourseInfoForm';
+
+export {
+  LecturesForm,
+} from './LecturesForm';

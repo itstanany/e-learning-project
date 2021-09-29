@@ -24,7 +24,6 @@ const handler = async (req, res, { cookies }) => {
   try {
     const { idToken, isNewUser, role = 'user' } = req.body;
     const result = await adminApp.auth().verifyIdToken(idToken);
-    // console.log({ result });
     cookies.set('user', JSON.stringify({ uid: result.uid, role: result.role || 'user' }), userCookiesOptions);
     if (isNewUser) {
       adminApp.auth().setCustomUserClaims(result.uid, { role: 'user' });
@@ -32,7 +31,6 @@ const handler = async (req, res, { cookies }) => {
     }
     res.json({ auth: true });
   } catch (error) {
-    // console.log({ error });
     res.json({ auth: false });
   }
 };

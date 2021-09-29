@@ -17,16 +17,13 @@ const useStyles = makeStyles((theme) => ({
   main: {
     marginTop: theme.spacing(12),
     marginBottom: theme.spacing(2),
-    // make main content occupy all remaining height
-    flexGrow: 55,
   },
   footer: {
-    padding: theme.spacing(3, 2),
+    // padding: theme.spacing(2, 1),
     marginTop: 'auto',
-    backgroundColor:
-      theme.palette.type === 'light'
-        ? theme.palette.grey[200]
-        : theme.palette.grey[800],
+    backgroundColor: (theme.palette.type === 'light'
+      ? theme.palette.grey[200]
+      : theme.palette.grey[800]),
   },
 }));
 
@@ -36,26 +33,35 @@ export function Layout(props) {
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
-      <Header
-        color="dark"
-        routes={dashboardRoutes}
-        brand="El-Doctor E-Center"
-        // rightLinks={<HeaderLinks />}
-        fixed
-        changeColorOnScroll={{
-          height: 400,
-          color: 'white',
-        }}
-        {...rest}
-      />
-      <Container component="main" className={classes.main} maxWidth="lg"/*  style={{ marginTop: '155px' }} */>
+      <div className={classes.header}>
+        <Header
+          color="dark"
+          routes={dashboardRoutes}
+          brand="El-Doctor E-Center"
+          // rightLinks={<HeaderLinks />}
+          fixed
+          changeColorOnScroll={{
+            height: 400,
+            color: 'white',
+          }}
+          {...rest}
+        />
+      </div>
+
+      <Container
+        component="main"
+        className={classes.main}
+        maxWidth="lg"
+      /*  style={{ marginTop: '155px' }} */
+      >
         {
           // eslint-disable-next-line react/destructuring-assignment
           props.children
         }
       </Container>
-      <footer className={classes.footer}>
+      <footer
+        className={classes.footer}
+      >
         <Footer />
       </footer>
     </div>

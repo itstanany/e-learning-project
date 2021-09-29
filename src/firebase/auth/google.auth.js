@@ -16,14 +16,12 @@ const verifyOnBackEnd = ({ idToken, isNewUser }) => fetch('/api/signin', {
 
 const signinWithGoogle = async () => {
   const res = await auth.signInWithPopup(googleProvider);
-  console.log({ res });
   // official way to get idTOken of google sign in
   // but "res.user.Aa" worked in real example
   // res.credential.idToken raise...
   //    "error: FirebaseAuthError: Firebase ID token has incorrect "aud" (audience) claim."
   // const idToken = await auth.currentUser.getIdToken();
   const idToken = res.user.Aa;
-  console.log({ idToken });
   const result = await verifyOnBackEnd({ idToken, isNewUser: res.additionalUserInfo.isNewUser });
   return result;
 };

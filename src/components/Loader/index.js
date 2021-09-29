@@ -1,18 +1,7 @@
-import { CircularProgress, Grid } from '@material-ui/core';
-import React from 'react';
+import { Loader } from './Loader';
 
-const Loader = () => (
-  <Grid
-    container
-    justifyContent="center"
-    alignItems="center"
-    style={{ height: '90vh', width: '90vw' }}
-  >
-    <CircularProgress />
-  </Grid>
-);
-
-export default Loader;
+export { FullPageLoader } from './FullPageLoader';
 export {
   Loader,
 };
+export default Loader;

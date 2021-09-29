@@ -1,7 +1,11 @@
-const apiPost = ({ route, body = '' }) => fetch(`/api${route}`, {
-  method: 'POST',
-  body,
-}).then((res) => res.json());
+const apiPost = async ({ url, body }) => {
+  const res = await fetch(`/api/${url}`, {
+    method: 'POST',
+    body,
+    credentials: 'include',
+  });
+  return res.json();
+};
 
 export {
   apiPost,

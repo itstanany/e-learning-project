@@ -1,3 +1,8 @@
+/*
+  * Render all courses in a responsive page.
+  * Render mode: Incremental static Generation. Page is revalidated after 5 seconds of visit
+*/
+
 import Head from 'next/head';
 import {
   Grid,
@@ -6,11 +11,44 @@ import {
 import { getAllcourses } from '../../utils/server';
 import { CourseCard } from '../../components/CourseCard/Index';
 import { useUser } from '../../customHooks';
+import CourseLibrary from '../../components/CourseLibrary';
+import { useEffect, useMemo, useState } from 'react';
 
-function AllCourses({ courses = [] }) {
+function AllCourses({ courses: initialCourses = [] }) {
+  // const [courses, setCourses] = useState(initialCourses);
+  // console.log({ courses });
   const {
     user,
   } = useUser();
+
+  const courses = useMemo(() => {
+    if (initialCourses?.length && user?.subscription?.length > 0) {
+      const coursesWithSubscription = initialCourses?.map((crse) => {
+        const crseWithSubscription = {
+          ...crse,
+          subscribed: user?.subscription?.includes(crse?.id),
+        };
+        return crseWithSubscription;
+      });
+      return coursesWithSubscription;
+    }
+    return initialCourses;
+  }, [user, initialCourses]);
+
+  // useEffect(() => {
+  //   console.log('inside useeffect');
+  //   if (courses && user?.subscription?.length > 0) {
+  //     const coursesWithSubscription = courses.map((crse) => {
+  //       const crseWithSubscription = {
+  //         ...crse,
+  //         subscribed: user?.subscription?.includes(crse?.id),
+  //       };
+  //       return crseWithSubscription;
+  //     });
+  //     setCourses(coursesWithSubscription);
+  //   }
+  // }, [user]);
+
   return (
     <>
       <Head>
@@ -18,7 +56,7 @@ function AllCourses({ courses = [] }) {
           All Courses
         </title>
       </Head>
-      <Grid container spacing={3}>
+      {/* <Grid container spacing={3}>
         {
           courses.map((course) => {
             const subscribed = (user?.subscription?.includes(course?.id));
@@ -29,7 +67,8 @@ function AllCourses({ courses = [] }) {
             );
           })
         }
-      </Grid>
+      </Grid> */}
+      <CourseLibrary courses={courses} />
     </>
   );
 }

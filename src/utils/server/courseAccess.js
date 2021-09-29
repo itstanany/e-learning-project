@@ -8,7 +8,9 @@ import { getUserDoc } from './getUserDoc';
  */
 const courseAccess = (getServerSideProps) => async (ctx, { userCookie }) => {
   const userDoc = await getUserDoc({ uid: userCookie.uid });
+  console.log(`has access ${userDoc.subscription.includes(ctx.params?.cid)}`);
   if (userDoc.subscription.includes(ctx.params?.cid)) {
+    console.log('inside get access, and granteed');
     return getServerSideProps(ctx, { userCookie });
   }
   return {

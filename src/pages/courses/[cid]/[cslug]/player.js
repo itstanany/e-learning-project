@@ -2,7 +2,7 @@
  * Course Player Page
  */
 
-import CoursePlayer from '../../../../components/CoursePlayer';
+import { CoursePlayer } from '../../../../components/CoursePlayer';
 import {
   getAllcourses,
   getCourse, getLectures,

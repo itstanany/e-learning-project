@@ -1,3 +1,7 @@
+/**
+ * Lectures form
+ * Presentational component
+ */
 // todo, add gradient border color
 
 import {
@@ -44,6 +48,7 @@ const useStyles = makeStyles(() => ({
     border: '2px dashed #0e0e0e',
     borderColor: 'linear-gradient(to right, red, purple)',
     padding: '10px 5px',
+    borderRadius: '8px',
   },
   newLectBtn: {
     margin: '10px auto',
@@ -57,8 +62,6 @@ function LecturesForm({
   handlerAddNewLect,
   isLoading,
 }) {
-  console.log('insideLecturesforma dn lectures are');
-  console.log({ lectures });
   const classes = useStyles();
   return (
     <Grid
@@ -109,7 +112,6 @@ function LecturesForm({
                       index,
                     }
                   }
-                // index={index}
                 />
               </Grid>
 
@@ -135,7 +137,6 @@ function LecturesForm({
                 <InputText
                   tag={TextField}
                   variant="outlined"
-                  required
                   fullWidth
                   multiline
                   minRows={3}

@@ -135,8 +135,6 @@ const InputNumber = ({
      * accept only NUMBER input and discard anything else
      */
     const { target: { value: eValue } } = e;
-    console.log({ ...(e.target.value) });
-    console.log({ eValue });
     if (eValue.match(/^[1-9]\d{0,30}(\.\d{0,4})*(,\d+)?$/) || eValue === '') {
       setLocaleValue(eValue);
     }
@@ -157,8 +155,6 @@ const InputNumber = ({
      * ... So It is guaranteed that state variable of the parent
      * ... is up to date with the last value in state variable of this component
      */
-    console.log('onBlur NUMBER INPUT');
-    console.log({ localeValue })
     if (onChange) onChange(e, { value: unformat(localeValue), index });
   }, [localeValue]);
 
@@ -173,7 +169,6 @@ const InputNumber = ({
   // ... all properties supplied by the parent component
   // value property must be after {...remaining}
   //   to override "value" property supplied by the parent component
-  console.log({ tag, value, localeValue })
   return (
     React.createElement(tag, {
       ...remaining,
