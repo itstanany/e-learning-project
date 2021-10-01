@@ -42,7 +42,11 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
      * If there is no lecture query parameter, add id of the first lecture
      */
 
-    if (!router?.query?.lecture && (lectures?.length > 0)) {
+    if (
+      !router?.query?.lecture
+      && router?.isReady
+      && (lectures?.length > 0)
+    ) {
       router.push(
         {
           pathname: router.pathname,
