@@ -5,23 +5,23 @@
 
 import Head from 'next/head';
 import {
-  Grid,
-} from '@material-ui/core';
-
+  useMemo,
+} from 'react';
 import { getAllcourses } from '../../utils/server';
-import { CourseCard } from '../../components/CourseCard/Index';
 import { useUser } from '../../customHooks';
-import CourseLibrary from '../../components/CourseLibrary';
-import { useEffect, useMemo, useState } from 'react';
+import { CourseLibrary } from '../../components/CourseLibrary';
+import { coursesPropTypes } from '../../utils/client/propTypes';
 
-function AllCourses({ courses: initialCourses = [] }) {
-  // const [courses, setCourses] = useState(initialCourses);
-  // console.log({ courses });
+function AllCourses({ courses: initialCourses }) {
   const {
     user,
   } = useUser();
 
   const courses = useMemo(() => {
+    /**
+     * Update course object to add a boolean "subscribed" prop
+     * @returns [objects], array of course objects, see prop-types for object shape
+     */
     if (initialCourses?.length && user?.subscription?.length > 0) {
       const coursesWithSubscription = initialCourses?.map((crse) => {
         const crseWithSubscription = {
@@ -35,20 +35,6 @@ function AllCourses({ courses: initialCourses = [] }) {
     return initialCourses;
   }, [user, initialCourses]);
 
-  // useEffect(() => {
-  //   console.log('inside useeffect');
-  //   if (courses && user?.subscription?.length > 0) {
-  //     const coursesWithSubscription = courses.map((crse) => {
-  //       const crseWithSubscription = {
-  //         ...crse,
-  //         subscribed: user?.subscription?.includes(crse?.id),
-  //       };
-  //       return crseWithSubscription;
-  //     });
-  //     setCourses(coursesWithSubscription);
-  //   }
-  // }, [user]);
-
   return (
     <>
       <Head>
@@ -56,22 +42,19 @@ function AllCourses({ courses: initialCourses = [] }) {
           All Courses
         </title>
       </Head>
-      {/* <Grid container spacing={3}>
-        {
-          courses.map((course) => {
-            const subscribed = (user?.subscription?.includes(course?.id));
-            return (
-              <Grid item xs={12} sm={6} md={4} lg={3}>
-                <CourseCard course={course} key={course.id} subscribed={subscribed} />
-              </Grid>
-            );
-          })
-        }
-      </Grid> */}
+      {/* Courses Library */}
       <CourseLibrary courses={courses} />
     </>
   );
 }
+
+AllCourses.defaultProps = {
+  courses: [],
+};
+
+AllCourses.propTypes = {
+  courses: coursesPropTypes,
+};
 
 export default AllCourses;
 
@@ -80,7 +63,7 @@ export const getStaticProps = async () => {
   const courses = await getAllcourses();
   return {
     props: {
-      courses,
+      courses: courses || [],
     },
     revalidate: 5,
   };

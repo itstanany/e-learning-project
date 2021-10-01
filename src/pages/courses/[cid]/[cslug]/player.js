@@ -8,14 +8,14 @@ import {
   getCourse, getLectures,
 } from '../../../../utils/server';
 
-const Player = ({ course, lectures }) => (
+const PlayerPage = ({ course, lectures }) => (
   <CoursePlayer
     course={course}
     lectures={lectures}
   />
 );
 
-export default Player;
+export default PlayerPage;
 
 const getStaticPaths = async () => {
   const courses = await getAllcourses();

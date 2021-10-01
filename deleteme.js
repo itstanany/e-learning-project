@@ -1563,3 +1563,222 @@ return (
 {/* <TableCell align="right">Fat&nbsp;(g)</TableCell>
             <TableCell align="right">Carbs&nbsp;(g)</TableCell>
             <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
+
+
+
+
+
+{/* {
+          leftLinks !== undefined
+            ? brandComponent
+            : null
+        } */}
+{/* <div className={classes.flex}>
+          {
+            leftLinks !== undefined
+              ? (
+                <Hidden smDown implementation="css">
+                  {
+                    leftLinks
+                  }
+                </Hidden>
+              )
+              : (
+                brandComponent
+              )
+          }
+        </div> */}
+
+
+
+const headerColorChange = () => {
+  const { color, changeColorOnScroll } = props;
+  const windowsScrollTop = window.pageYOffset;
+  if (windowsScrollTop > changeColorOnScroll.height) {
+    console.log('inside scroll top');
+    document.body
+      .getElementsByTagName('header')[0]
+      .classList.remove(classes[color]);
+    document.body
+      .getElementsByTagName('header')[0]
+      .classList.add(classes[changeColorOnScroll.color]);
+  } else {
+    console.log('color', color);
+    document.body
+      .getElementsByTagName('header')[0]
+      .classList.add(classes[color]);
+    document.body
+      .getElementsByTagName('header')[0]
+      .classList.remove(classes[changeColorOnScroll.color]);
+  }
+};
+
+const {
+  // color = 'dark', /*  rightLinks, */ leftLinks, brand, fixed, absolute,
+  color = 'dark',
+  links,
+  brand,
+
+} = props;
+
+React.useEffect(() => {
+  if (props.changeColorOnScroll) {
+    window.addEventListener('scroll', headerColorChange);
+  }
+  return function cleanup() {
+    if (props.changeColorOnScroll) {
+      window.removeEventListener('scroll', headerColorChange);
+    }
+  };
+});
+
+/* Custom Dropdown */
+
+/**
+
+        <CustomDropdown
+          noLiPadding
+          buttonText="Components"
+          buttonProps={{
+            className: classes.navLink,
+            color: "transparent",
+          }}
+          buttonIcon={Apps}
+          dropdownList={[
+            // <Link to="/" className={classes.dropdownLink}>
+            //   All components
+            // </Link>,
+            <Link href="/" className={classes.dropdownLink}>
+              <a
+                className={classes.dropdownLink}
+              >
+                All components
+              </a>
+            </Link>,
+            <a
+              href="https://creativetimofficial.github.io/material-kit-react/#/documentation?ref=mkr-navbar"
+              target="_blank"
+              className={classes.dropdownLink}
+            >
+              Documentation
+            </a>,
+          ]}
+        />
+
+ */
+
+/* social icons
+<ListItem className={classes.listItem}>
+  <Tooltip title="Delete">
+    <IconButton aria-label="Delete">
+      <DeleteIcon />
+    </IconButton>
+  </Tooltip>
+  <Tooltip
+    id="instagram-twitter"
+    title="Follow us on twitter"
+    placement={typeof window !== 'undefined' && window.innerWidth > 959 ? "top" : "left"}
+    classes={{ tooltip: classes.tooltip }}
+  >
+    <Button
+      href="https://twitter.com/CreativeTim?ref=creativetim"
+      target="_blank"
+      color="danger"
+      className={classes.navLink}
+      buttonIcon={Twitter}
+    >
+      Twitter
+       <i className={classes.socialIcons + " fab fa-twitter"} />
+    </Button>
+  </Tooltip >
+</ListItem >
+<ListItem className={classes.listItem}>
+  <Tooltip
+    id="instagram-facebook"
+    title="Follow us on facebook"
+    placement={typeof window !== 'undefined' && window.innerWidth > 959 ? "top" : "left"}
+    classes={{ tooltip: classes.tooltip }}
+  >
+    <Button
+      color="transparent"
+      href="https://www.facebook.com/CreativeTim?ref=creativetim"
+      target="_blank"
+      className={classes.navLink}
+    >
+      <i className={classes.socialIcons + " fab fa-facebook"} />
+    </Button>
+  </Tooltip>
+</ListItem>
+<ListItem className={classes.listItem}>
+  <Tooltip
+    id="instagram-tooltip"
+    title="Follow us on instagram"
+    placement={typeof window !== 'undefined' && window.innerWidth > 959 ? "top" : "left"}
+    classes={{ tooltip: classes.tooltip }}
+  >
+    <Button
+      color="transparent"
+      href="https://www.instagram.com/CreativeTimOfficial?ref=creativetim"
+      target="_blank"
+      className={classes.navLink}
+    >
+      <i className={classes.socialIcons + " fab fa-instagram"} />
+    </Button>
+  </Tooltip>
+</ListItem>
+*/
+
+
+
+<ul className={classes.list}>
+  {
+    footerLinks?.map((lnk) => (
+      <li>
+        <Link
+          href={lnk.path}
+        >
+          <a>
+            {
+              lnk.name
+            }
+          </a>
+        </Link>
+      </li>
+    ))
+  }
+
+</ul>
+
+
+
+  // useEffect(() => {
+  //   /**
+  //    * update "selectedLecture" with lecture object reflecting current "lecture" url parameter
+  //    * fetch resources of current lecture and add it to selectedLecture object
+  //    */
+
+  //   if (router?.query?.lecture && lectures) {
+  //     let selected = selectLecture({ lectures, id: router?.query?.lecture });
+  //     if (!selected.res) {
+  //       setLoadingResource(true);
+  //       return fetchLectRes({ cId: router?.query?.cid, lId: selected?.id })
+  //         .then(({ resources: responseResources, error: resError }) => {
+  //           if (resError === 'not authenticated' || resError === 'not authorized') {
+  //             return setNotAuthorized(true);
+  //           }
+  //           selected = {
+  //             ...selected,
+  //             res: responseResources,
+  //           };
+  //           // selected.res = responseResources;
+  //           console.log({ selected })
+  //           return setSelectedLecture(selected);
+  //         })
+  //         .catch(() => setError(true))
+  //         .finally(() => (setLoadingResource(false)));
+  //     }
+  //     return setSelectedLecture(selected);
+
+  //   }
+  // }, [router?.query?.lecture, router?.query?.cid, lectures]);
+

@@ -10,9 +10,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useRouter } from 'next/router';
 import { auth } from '../../../firebase/client';
 
-import styles from '../../../assets/jss/material-kit-react/components/headerLinksStyle.js';
+import { headerLinksStyle } from '../style/headerLinksStyle';
 
-const useStyles = makeStyles(styles);
+const useStyles = makeStyles(headerLinksStyle);
 
 const AuthNavItem = ({ user, handleDrawerToggle }) => {
   const classes = useStyles();
@@ -23,7 +23,7 @@ const AuthNavItem = ({ user, handleDrawerToggle }) => {
     fetch('/api/logout');
     handleDrawerToggle(e);
     router.push('/courses');
-  }, []);
+  }, [handleDrawerToggle, router]);
   return (
     <>
       <ListItem className={classes.listItem}>

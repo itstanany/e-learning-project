@@ -2,7 +2,7 @@
  * Render lecture resource based on its type
  * currently implemented types are Videos and text
  */
-
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
@@ -21,10 +21,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Resource({ lecture }) {
+function Resource({ resources }) {
   const classes = useStyles();
   return (
-    lecture?.res?.map((res) => {
+    resources?.map((res) => {
       // escape sources with empty or null source link
       if (!(res.src)) return null;
       switch (res.type) {
@@ -42,7 +42,7 @@ function Resource({ lecture }) {
                 frameBorder="0"
                 allowFullScreen
                 title={
-                  lecture?.title
+                  `Video ${res?.src}`
                 }
                 className={classes.iframe}
               />
@@ -64,6 +64,20 @@ function Resource({ lecture }) {
     })
   );
 }
+
+Resource.defaultProps = {
+  resources: [],
+};
+
+Resource.propTypes = {
+  resources: PropTypes.arrayOf(
+    PropTypes.shape({
+      src: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      id: PropTypes.string,
+    }),
+  ),
+};
 
 export default Resource;
 

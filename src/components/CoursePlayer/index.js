@@ -1,15 +1,13 @@
 /**
- * Course Player Page
+ * Course Player Container component
  */
-import React, { useCallback, useEffect, useState } from 'react';
-import Head from 'next/head';
-import { makeStyles } from '@material-ui/core/styles';
-import { CastForEducationOutlined } from '@material-ui/icons';
-import { useRouter } from 'next/router';
+
+import PropTypes from 'prop-types';
 import {
-  Grid, ListSubheader, ListItem, ListItemIcon, ListItemText,
-  List,
-} from '@material-ui/core';
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Loader } from '../Loader';
 import {
   fetchLectRes, selectLecture,
@@ -18,36 +16,13 @@ import { CourseNotFound } from '../CourseNotFound';
 import { NotAuthorized } from './NotAuthorized';
 import { ErrorPage } from '../ErrorPage';
 import { Resource } from './Resource';
+import { CoursePlayerComponent } from './CoursePlayer.component';
+import { useUpdateMounted } from '../../customHooks/useUpdateMounted';
+import { coursePropTypes, lecturePropTypes } from '../../utils/client/propTypes';
 
-// styles
-const useStyles = makeStyles((theme) => ({
-  listGrid: {
-    order: 1,
-    [theme.breakpoints.down('sm')]: {
-      order: 200,
-    },
-  },
-  listRoot: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-    position: 'relative',
-    overflow: 'auto',
-    maxHeight: '70vh',
-  },
-  resourcesPlayerGrid: {
-    order: 2,
-    [theme.breakpoints.down('sm')]: {
-      order: 1,
-    },
-  },
-  subheaderStyle: {
-    color: '#fafafa',
-    background: '#0e0e0e',
-  },
-}));
-
-const CoursePlayer = ({ course, lectures }) => {
-  const classes = useStyles();
+const CoursePlayer = ({ course, lectures: initLects }) => {
+  const [lectures, setLectures] = useState(initLects);
+  // client-side router
   const router = useRouter();
   // boolean, status indicator for loading resources of selected lecture
   const [loadingResource, setLoadingResource] = useState(true);
@@ -59,12 +34,14 @@ const CoursePlayer = ({ course, lectures }) => {
   const [selectedLecture, setSelectedLecture] = useState(
     selectLecture({ lectures, id: router?.query?.lecture }),
   );
+  // update state handler to update state in mounted component only
+  const { updateSt } = useUpdateMounted();
 
   useEffect(() => {
     /**
-     * On Mounting
      * If there is no lecture query parameter, add id of the first lecture
      */
+
     if (!router?.query?.lecture && (lectures?.length > 0)) {
       router.push(
         {
@@ -79,7 +56,7 @@ const CoursePlayer = ({ course, lectures }) => {
         { shallow: true },
       );
     }
-  }, [router.query?.cid, router.query?.cslug, lectures]);
+  }, [lectures, router]);
 
   const handleListItemClick = useCallback((e, { lectureId }) => {
     /**
@@ -98,37 +75,63 @@ const CoursePlayer = ({ course, lectures }) => {
       undefined,
       { shallow: true },
     );
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     /**
-     * update "selectedLecture" with lecture object reflecting current "lecture" url parameter
-     * fetch resources of current lecture and add it to selectedLecture object
+     * Update lectures object with "selected" boolean property
      */
+    setLectures((prevSt) => (
+      (prevSt)
+        ?.map((lect) => (
+          (lect?.id === router?.query?.lecture)
+            ? ({ ...lect, selected: true })
+            : ({ ...lect, selected: false })))
+    ));
+  }, [router?.query?.lecture]);
 
-    if (router?.query?.lecture && lectures) {
-      const selected = selectLecture({ lectures, id: router?.query?.lecture });
-      if (!selected.res) {
-        setLoadingResource(true);
-        return fetchLectRes({ cId: router?.query?.cid, lId: selected?.id })
-          .then(({ resources: responseResources, error: resError }) => {
-            if (resError === 'not authenticated' || resError === 'not authorized') {
-              return setNotAuthorized(true);
-            }
-            selected.res = responseResources;
-            return setSelectedLecture(selected);
-          })
-          .catch(() => setError(true))
-          .finally(() => (setLoadingResource(false)));
-      }
-      return setSelectedLecture(selected);
+  useEffect(() => {
+    /**
+     * update "selectedLecture" with lecture object
+     *  ... reflecting current "lecture" url parameter
+     */
+    const selected = lectures?.find((lect) => (lect.selected));
+    return setSelectedLecture(selected);
+  }, [lectures, router?.query?.cid]);
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    /**
+      * fetch resources of current lecture and add it to selectedLecture object
+     */
+    if (selectedLecture && !selectedLecture.res) {
+      setLoadingResource(true);
+      return fetchLectRes({ cId: router?.query?.cid, lId: selectedLecture?.id })
+        .then(({ resources: responseResources, error: resError }) => {
+          if (resError === 'not authenticated' || resError === 'not authorized') {
+            return updateSt(setNotAuthorized, true);
+            // return setNotAuthorized(true);
+          }
+          // we MUTATE the state to avoid re-fetching the resources on every select
+          selectedLecture.res = responseResources;
+          return updateSt(setSelectedLecture, selectedLecture);
+          // return setSelectedLecture(selectedLecture);
+        })
+        .catch(() => updateSt(setError, true))
+        .finally(() => updateSt(setLoadingResource, false));
     }
-  }, [router?.query?.lecture, router?.query?.cid, lectures]);
+  }, [router?.query?.cid, selectedLecture, updateSt]);
+
+  useEffect(() => {
+    console.log('lecture query updated');
+    console.log({ lecture: router?.query?.lecture });
+  }, [router?.query?.lecture]);
 
   /**
-   * Render resource part with the actual resource or informative message about user status
+   * Render resource part with the actual resource
+   *  ... or informative message about user status
    */
-  const renderResource = useCallback(
+  const renderResource = useMemo(
     () => (
       <>
         {
@@ -155,7 +158,7 @@ const CoursePlayer = ({ course, lectures }) => {
           selectedLecture?.res?.length > 0 && !loadingResource
             ? (
               <Resource
-                lecture={selectedLecture}
+                resources={selectedLecture.res}
               />
             )
             : null
@@ -175,83 +178,24 @@ const CoursePlayer = ({ course, lectures }) => {
               {
                 selectedLecture?.title
               }
-              &nbsp;
-              |
-              &nbsp;
+              {
+                selectedLecture?.title
+                  ? (
+                    ' | '
+                  )
+                  : null
+              }
               {
                 course?.title
               }
             </title>
           </Head>
-          <Grid container spacing={3}>
-            <Grid
-              xs={12}
-              md={4}
-              className={classes.listGrid}
-              item
-            >
-              {/* Lectures List */}
-              <div className={classes.listRoot}>
-                <List
-                  component="nav"
-                  aria-label="Lectures List"
-                  subheader={
-                    (
-                      <ListSubheader
-                        component="div"
-                        color="primary"
-                        className={classes.subheaderStyle}
-                      >
-                        {
-                          course.title
-                        }
-                      </ListSubheader>
-                    )
-                  }
-                >
-                  {
-                    lectures?.map((lecture) => (
-                      // escape lectures with no title
-                      lecture?.title
-                        ? (
-                          <ListItem
-                            button
-                            selected={router.query?.lecture === lecture?.id}
-                            onClick={(e) => handleListItemClick(e, { lectureId: lecture.id })}
-                            key={lecture?.id}
-                          >
-                            <ListItemIcon>
-                              <CastForEducationOutlined />
-                            </ListItemIcon>
-                            <ListItemText primary={`Lecture<${lecture.order}> ${lecture?.title}`} />
-                          </ListItem>
-                        )
-                        : null
-                    ))
-                  }
-                </List>
-              </div>
-            </Grid>
-            {/* Resource area */}
-            <Grid
-              xs={12}
-              md={8}
-              className={classes.resourcesPlayerGrid}
-              item
-            >
-              <Grid
-                container
-                justifyContent="center"
-                alignItems="center"
-                alignContent="center"
-                style={{ minHeight: '100%', minWidth: '100%' }}
-              >
-                {
-                  renderResource()
-                }
-              </Grid>
-            </Grid>
-          </Grid>
+          <CoursePlayerComponent
+            course={course}
+            lectures={lectures}
+            handleListItemClick={handleListItemClick}
+            resources={renderResource}
+          />
         </>
       )
       : (
@@ -260,6 +204,16 @@ const CoursePlayer = ({ course, lectures }) => {
           : <CourseNotFound />
       )
   );
+};
+
+CoursePlayer.defaultProps = {
+  course: null,
+  lectures: null,
+};
+
+CoursePlayer.propTypes = {
+  course: coursePropTypes,
+  lectures: PropTypes.arrayOf(lecturePropTypes),
 };
 
 export default CoursePlayer;
