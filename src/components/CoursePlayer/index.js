@@ -41,7 +41,6 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
     /**
      * If there is no lecture query parameter, add id of the first lecture
      */
-
     if (
       !router?.query?.lecture
       && router?.isReady
@@ -125,11 +124,6 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
         .finally(() => updateSt(setLoadingResource, false));
     }
   }, [router?.query?.cid, selectedLecture, updateSt]);
-
-  useEffect(() => {
-    console.log('lecture query updated');
-    console.log({ lecture: router?.query?.lecture });
-  }, [router?.query?.lecture]);
 
   /**
    * Render resource part with the actual resource
