@@ -1,3 +1,7 @@
+/**
+ * Auth Navigation item
+ * It shows current authentication state of the user and possible actions
+ */
 import React, { useCallback } from 'react';
 // next components
 import Link from 'next/link';
@@ -8,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useRouter } from 'next/router';
-import { auth } from '../../../firebase/client';
+import { logoutHandler as utilsLogoutHandler } from '../../../utils/client/auth';
 
 import { headerLinksStyle } from '../style/headerLinksStyle';
 
@@ -19,11 +23,16 @@ const AuthNavItem = ({ user, handleDrawerToggle }) => {
   const router = useRouter();
 
   const logoutHandler = useCallback(async (e) => {
-    auth.signOut();
-    fetch('/api/logout');
+    /**
+     * Handler logout click
+     */
+    utilsLogoutHandler();
     handleDrawerToggle(e);
     router.push('/courses');
   }, [handleDrawerToggle, router]);
+
+  // if user is authenticated, show his/her name
+  // otherwise, show Login Button
   return (
     <>
       <ListItem className={classes.listItem}>

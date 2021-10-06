@@ -1,8 +1,12 @@
+/**
+ * Check for possibility of by passing upload  thumbnail
+ * @param {object} paramsObj - parameters object
+ * @param {object} paramsObj.req - NextJs request body
+ * @param {object} paraObj.req.body.courseInfo - course info object with prop "thumbnail"
+ * @returns {boolean}
+ */
 const bypassThumbnailUpload = ({ req }) => {
-  console.log({ body: req.body });
-  // const parsedCourseInfo = JSON.parse(req?.body?.courseInfo);
   const parsedCourseInfo = req?.body?.courseInfo;
-  // console
   if (parsedCourseInfo?.thumbnail) {
     return true;
   }

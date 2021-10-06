@@ -23,8 +23,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 function AdminDashboardComponent({
-  courses,
-  deleteHandler,
+  courses = [],
+  deleteHandler = () => ({}),
 }) {
   const classes = useStyles();
   return (
@@ -57,7 +57,7 @@ function AdminDashboardComponent({
           </TableHead>
           <TableBody>
             {
-              courses.map((course, index) => (
+              courses?.map((course, index) => (
                 <TableRow
                   key={course.id}
                 >

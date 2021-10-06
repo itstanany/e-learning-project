@@ -1,18 +1,13 @@
-import nc from 'next-connect';
-import { getUserDoc } from '../../../utils/server';
-import { requireAuth } from '../../../utils/server/middlewares';
-
 /**
- * return user document from database
+ * userdoc API route handler
  */
+import nc from 'next-connect';
+import { userdocController } from '../../../utils/server/controllers';
+import { requireAuth } from '../../../utils/server/middlewares';
 
 const handler = nc();
 handler.use(requireAuth);
 
-handler.use(async (req, res) => {
-  const { body: { user } } = req;
-  const userDoc = await getUserDoc({ uid: user?.uid });
-  res.json({ userDoc });
-});
+handler.use(userdocController);
 
 export default (handler);

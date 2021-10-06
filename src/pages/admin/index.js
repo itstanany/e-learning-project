@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { AdminDashboard } from '../../components/AdminDashboard';
-// import { adminEditorAccess, protectPage } from '../../utils/server';
+import { adminEditorAccess, protectPage } from '../../utils/server';
 
 function Admin() {
   return (
@@ -11,8 +11,8 @@ function Admin() {
   );
 }
 
-// const getSSProps = () => ({ props: {} });
+const getSSProps = () => ({ props: {} });
 
-// export const getServerSideProps = protectPage(adminEditorAccess(getSSProps));
+export const getServerSideProps = protectPage(adminEditorAccess(getSSProps));
 
 export default (Admin);

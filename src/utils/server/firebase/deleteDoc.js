@@ -1,27 +1,25 @@
 /* eslint-disable no-restricted-syntax */
 import { adminFirestore } from '../../../firebase/admin';
 
+/**
+ * Delete Doc and its sub collection
+ * @param {object} deletionInfo - object contains info about doc t be deleted
+ * @param {string} deletionInfo.docPath - document path in firestore to be deleted
+ * @returns {boolean} true for successful deletion, false otherwise
+ */
 const deleteDoc = async ({ docPath }) => {
-  console.log('inside deleteDoc')
   // document reference
   const docRef = adminFirestore
     .doc(docPath);
 
-  console.log({
-    docId: docRef.id,
-  });
-
-  // subcollections
+  // sub-collections
   const subcollections = await docRef.listCollections();
-  console.log({ subcollections });
   for await (const subcollectionRef of subcollections) {
-    console.log({ subCollId: subcollectionRef.id });
     await subcollectionRef
       .get()
       .then(async (snapshot) => {
         const { docs } = snapshot;
         for await (const doc of docs) {
-          console.log({ subColDOCID: doc.id });
           await deleteDoc({ docPath: `${docPath}/${subcollectionRef.id}/${doc.id}` });
         }
         return true;
@@ -29,7 +27,7 @@ const deleteDoc = async ({ docPath }) => {
       .catch(() => false);
   }
 
-  // when all subcollections are deleted, delete the document itself
+  // when all sub-collections are deleted, delete the document itself
   return docRef
     .delete()
     .then(() => true)
@@ -39,8 +37,3 @@ const deleteDoc = async ({ docPath }) => {
 export {
   deleteDoc,
 };
-
-// console.error('Error deleting document', docPath, JSON.stringify(error));
-
-// console.error('Error reading subcollection',
-//  `${docPath}/${subcollectionRef.id}`, JSON.stringify(error));

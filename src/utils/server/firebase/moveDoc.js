@@ -1,6 +1,15 @@
 import { deleteDoc } from './deleteDoc';
 import { copyDoc } from './copyDoc';
 
+/**
+ * Move a doc from firestore collection to different collection.
+ * @param {object} movingInfo - object contains info about moving data
+ * @param {string} movingInfo.collectionFrom - collection name to move a doc from
+ * @param {string} movingInfo.docId - document id
+ * @param {string} movingInfo.collectionTo - collection name to move doc to
+ * @param {object} movingInfo.addData - data to be added to copied doc
+ * @returns {boolean || Error} true for success moving or throw error for un successful move
+ */
 const moveDoc = async ({
   collectionFrom,
   docId,

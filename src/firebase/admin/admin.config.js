@@ -1,4 +1,18 @@
+/* eslint-disable camelcase */
 import * as admin from 'firebase-admin';
+import {
+  type,
+  project_id,
+  private_key_id,
+  private_key,
+  client_email,
+  client_id,
+  auth_uri,
+  token_uri,
+  auth_provider_x509_cert_url,
+  client_x509_cert_url,
+  storageBucket,
+} from '../../utils/server/config';
 // import serviceAccount from '../../keys/serviceAccountKey.json';
 
 // const adminApp = admin.apps.length
@@ -13,18 +27,18 @@ const adminApp = admin.apps.length
   ? admin.app()
   : admin.initializeApp({
     credential: admin.credential.cert({
-      type: process.env.FBA_TYPE,
-      project_id: process.env.FBA_PROJECT_ID,
-      private_key_id: process.env.FBA_PRIVATE_KEY_ID,
-      private_key: process.env.FBA_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      client_email: process.env.FBA_CLIENT_EMAIL,
-      client_id: process.env.FBA_CLIENT_ID,
-      auth_uri: process.env.FBA_AUTH_URI,
-      token_uri: process.env.FBA_TOKEN_URI,
-      auth_provider_x509_cert_url: process.env.FBA_AUTH_PROVIDER_X509_CERT_URL,
-      client_x509_cert_url: process.env.FBA_CLIENT_X509_CERT_URL,
+      type,
+      project_id,
+      private_key_id,
+      private_key,
+      client_email,
+      client_id,
+      auth_uri,
+      token_uri,
+      auth_provider_x509_cert_url,
+      client_x509_cert_url,
     }),
-    storageBucket: 'gs://e-learning-76331.appspot.com',
+    storageBucket,
   });
 
 export default adminApp;

@@ -4,11 +4,12 @@ import { adminFirestore } from '../../firebase/admin';
 
 /**
  * Save course info into the database
- * @param {
- * courseInfo: object of course details,
- * lectures: array of lecture details object
- * } param0
- * @returns {add: boolean}  true if info saved successfully, false otherwise
+ * @param {object} paramsObj - paramters object
+ * @param {object} paramsObj.courseInfo - course info object
+ * @param {array} paramsObj.lectures - array of lecture objects
+ * @returns {object} returnObj - return object
+ * @returns {boolean} returnsObj.added
+ * @returns {object} returnObj.error - error object in case of errors
  */
 const saveCourseInfo = async ({ courseInfo, lectures }) => {
   try {

@@ -1,4 +1,7 @@
-import { cookieKeys } from './cookiesKeys';
+/**
+ * User cookies options
+ */
+import { cookieKeys } from './config';
 
 const userCookiesOptions = {
   httpOnly: true,

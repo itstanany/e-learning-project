@@ -3,7 +3,7 @@
  * presentational component
  */
 import {
-  memo, useCallback, useEffect, useState,
+  memo, useEffect, useMemo, useState,
 } from 'react';
 import { Avatar, Grid, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
@@ -11,6 +11,7 @@ import { fetchCourse, getLectures } from '../../../utils/client';
 import { FullPageLoader } from '../../Loader';
 import { ErrorPage } from '../../ErrorPage';
 import { BasicCourseForm } from '../BasicCourseForm';
+import { CourseNotFound } from '../../CourseNotFound';
 
 /**
  * Fetch data for client side render
@@ -32,31 +33,47 @@ const fetchData = async ({ cId } = {}) => {
   };
 };
 
+const STATE_CONSTANTS = {
+  LOADING: 'LOADING',
+  READY: 'READY',
+  ERROR: 'ERROR',
+  NOT_FOUND: 'NOT_FOUND',
+};
+
 function CourseEditForm({ cId }) {
+  // course object
   const [course, setCourse] = useState(null);
+  // array of lectures
   const [lectures, setLectures] = useState(null);
-  const [state, setState] = useState('loading');
+  // data fetching state
+  const [state, setState] = useState(STATE_CONSTANTS.LOADING);
 
   useEffect(() => {
-    setState('loading');
+    setState(STATE_CONSTANTS.LOADING);
     if (!(cId === null || cId === undefined)) {
       return fetchData({ cId })
         .then(({
           course: resCourse,
           lectures: resLectures,
         }) => {
+          if (!resCourse?.title) {
+            return setState(STATE_CONSTANTS.NOT_FOUND);
+          }
           setCourse(resCourse);
           setLectures(resLectures);
-          setState('ready');
+          return setState(STATE_CONSTANTS.READY);
         })
-        .catch(() => setState('error'));
+        .catch(() => setState(STATE_CONSTANTS.ERROR));
     }
     return null;
   }, [cId]);
 
-  const renderContent = useCallback(() => {
+  const renderContent = useMemo(() => {
+    /**
+     * render content of the page
+     */
     switch (state) {
-      case 'ready':
+      case STATE_CONSTANTS.READY:
         return (
           <>
             <Grid
@@ -81,9 +98,11 @@ function CourseEditForm({ cId }) {
             />
           </>
         );
-      case 'loading':
+      case STATE_CONSTANTS.LOADING:
         return <FullPageLoader />;
-      case 'error':
+      case STATE_CONSTANTS.NOT_FOUND:
+        return <CourseNotFound />;
+      case STATE_CONSTANTS.ERROR:
         return <ErrorPage />;
       default:
         return null;
@@ -91,7 +110,7 @@ function CourseEditForm({ cId }) {
   }, [state, course, lectures]);
 
   return (
-    renderContent()
+    renderContent
   );
 }
 

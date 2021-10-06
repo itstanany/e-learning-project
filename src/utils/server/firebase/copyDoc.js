@@ -1,5 +1,15 @@
 import { adminFirestore } from '../../../firebase/admin';
 
+/**
+ * Copy a doc from firestore collection to different collection.
+ * @param {object} copyingInfo - object contains info about moving data
+ * @param {string} copyingInfo.collectionFrom - collection name to move a doc from
+ * @param {string} copyingInfo.docId - document id
+ * @param {string} copyingInfo.collectionTo - collection name to move doc to
+ * @param {boolean} copyingInfo.recursive - whether to copy sub-collections or not
+ * @param {object} copyingInfo.addData - data to be added to copied doc
+ * @returns {boolean || Error} true for success moving or throw error for un successful move
+ */
 const copyDoc = async (
   {
     collectionFrom,
@@ -11,13 +21,11 @@ const copyDoc = async (
 ) => {
   // document reference
   const docRef = adminFirestore.collection(collectionFrom).doc(docId);
-  // console.log({ docRef });
   // copy the document
   const docData = await docRef
     .get()
     .then((doc) => doc.exists && doc.data())
-    .catch((error) => {
-      console.error('Error reading document', `${collectionFrom}/${docId}`, JSON.stringify(error));
+    .catch(() => {
       throw new Error('not-found, Copying document was not read');
     });
 
@@ -27,8 +35,7 @@ const copyDoc = async (
       .collection(collectionTo)
       .doc(docId)
       .set({ ...docData, ...addData })
-      .catch((error) => {
-        console.error('Error creating document', `${collectionTo}/${docId}`, JSON.stringify(error));
+      .catch(() => {
         throw new Error('data-loss, Data was not copied properly to the target collection, please try again.');
       });
 
@@ -56,8 +63,7 @@ const copyDoc = async (
             }
             return true;
           })
-          .catch((error) => {
-            console.error('Error reading subcollection', subcollectionPath, JSON.stringify(error));
+          .catch(() => {
             throw new Error(
               'data-loss, Data was not copied properly to the target collection, please try again.',
             );

@@ -15,8 +15,9 @@ const lectures = [{
 }];
 
 const AddCourseForm = () => {
+  // user document from back-end
   const { user } = useUser();
-
+  // course initial data
   const course = useMemo(() => ({
     title: '',
     description: '',

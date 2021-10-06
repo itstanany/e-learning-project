@@ -1751,34 +1751,121 @@ React.useEffect(() => {
 
 
 
-  // useEffect(() => {
-  //   /**
-  //    * update "selectedLecture" with lecture object reflecting current "lecture" url parameter
-  //    * fetch resources of current lecture and add it to selectedLecture object
-  //    */
+// useEffect(() => {
+//   /**
+//    * update "selectedLecture" with lecture object reflecting current "lecture" url parameter
+//    * fetch resources of current lecture and add it to selectedLecture object
+//    */
 
-  //   if (router?.query?.lecture && lectures) {
-  //     let selected = selectLecture({ lectures, id: router?.query?.lecture });
-  //     if (!selected.res) {
-  //       setLoadingResource(true);
-  //       return fetchLectRes({ cId: router?.query?.cid, lId: selected?.id })
-  //         .then(({ resources: responseResources, error: resError }) => {
-  //           if (resError === 'not authenticated' || resError === 'not authorized') {
-  //             return setNotAuthorized(true);
-  //           }
-  //           selected = {
-  //             ...selected,
-  //             res: responseResources,
-  //           };
-  //           // selected.res = responseResources;
-  //           console.log({ selected })
-  //           return setSelectedLecture(selected);
-  //         })
-  //         .catch(() => setError(true))
-  //         .finally(() => (setLoadingResource(false)));
-  //     }
-  //     return setSelectedLecture(selected);
+//   if (router?.query?.lecture && lectures) {
+//     let selected = selectLecture({ lectures, id: router?.query?.lecture });
+//     if (!selected.res) {
+//       setLoadingResource(true);
+//       return fetchLectRes({ cId: router?.query?.cid, lId: selected?.id })
+//         .then(({ resources: responseResources, error: resError }) => {
+//           if (resError === 'not authenticated' || resError === 'not authorized') {
+//             return setNotAuthorized(true);
+//           }
+//           selected = {
+//             ...selected,
+//             res: responseResources,
+//           };
+//           // selected.res = responseResources;
+//           console.log({ selected })
+//           return setSelectedLecture(selected);
+//         })
+//         .catch(() => setError(true))
+//         .finally(() => (setLoadingResource(false)));
+//     }
+//     return setSelectedLecture(selected);
 
-  //   }
-  // }, [router?.query?.lecture, router?.query?.cid, lectures]);
+//   }
+// }, [router?.query?.lecture, router?.query?.cid, lectures]);
 
+
+{/* {
+          authFailed
+          && <AuthFailed />
+        }
+        {
+          isError
+          && (
+            <AuthError />
+          )
+        }
+        {
+          isLoading
+          && <FullPageLoader />
+        }
+        {
+          user
+            ? <AuthRedirect />
+            : (
+              <AuthComponent
+                handleLogin={handleLogin}
+              />
+            )
+        } */}
+
+// useEffect(() => (isLoading && setState(STATE_CONSTANTS.LOADING)), [isLoading]);
+
+// const handleLogin = useCallback(async (e) => {
+//   e.preventDefault();
+//   const result = await loginWithGoogle();
+//   if (result.auth) {
+//     setAuthFailed(false);
+//     redirectAuthenticated();
+//   } else {
+//     setAuthFailed(true);
+//   }
+// }, [redirectAuthenticated]);
+
+// useEffect(() => {
+//   if (user?.name) {
+//     redirectAuthenticated();
+//   }
+// }, [redirectAuthenticated, user]);
+
+// if (isLoading) return <FullPageLoader />;
+
+// if (!user) {
+
+const [authFailed, setAuthFailed] = useState(false);
+
+// useEffect(() => (isError && setState(STATE_CONSTANTS.ERROR)), [isError]);
+
+
+
+(
+  <>
+    {
+      // user not authorized to see lecture content
+      notAuthorized
+        ? (
+          <NotAuthorized />
+        )
+        : null
+    }
+    {
+      // error happened
+      error
+        ? <ErrorPage />
+        : null
+    }
+    {
+      loadingResource
+        ? <Loader />
+        : null
+    }
+    {
+      // lecture with one or more resource
+      selectedLecture?.res?.length > 0 && !loadingResource
+        ? (
+          <Resource
+            resources={selectedLecture.res}
+          />
+        )
+        : null
+    }
+  </>
+)

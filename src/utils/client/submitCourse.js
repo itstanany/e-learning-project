@@ -8,6 +8,7 @@ const SUBMIT_STATE = {
 
 const submitCourse = async ({ lectures, courseInfo, thumbnail = null }) => {
   let state;
+  let error;
   try {
     const formData = new FormData();
     formData.set('courseInfo', JSON.stringify(courseInfo));
@@ -19,11 +20,15 @@ const submitCourse = async ({ lectures, courseInfo, thumbnail = null }) => {
     } else if (result?.added === false) {
       state = SUBMIT_STATE.FAILED;
     }
-  } catch (error) {
+  } catch (e) {
+    console.log('tomato in submitCourse service function');
+    console.log({ error });
+    error = e;
     state = SUBMIT_STATE.ERROR;
   }
   return {
     state,
+    error,
   };
 };
 

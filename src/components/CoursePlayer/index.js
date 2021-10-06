@@ -20,10 +20,19 @@ import { CoursePlayerComponent } from './CoursePlayer.component';
 import { useUpdateMounted } from '../../customHooks/useUpdateMounted';
 import { coursePropTypes, lecturePropTypes } from '../../utils/client/propTypes';
 
+const RES_STATE_CONSTANTS = {
+  LOADING: 'LOADING',
+  ERROR: 'ERROR',
+  SUCCESS: 'SUCCESS',
+  NOT_AUTHORIZED: 'NOT_AUTHORIZED',
+  FAILED: 'FAILED',
+};
+
 const CoursePlayer = ({ course, lectures: initLects }) => {
   const [lectures, setLectures] = useState(initLects);
   // client-side router
   const router = useRouter();
+  const [resState, setResState] = useState(RES_STATE_CONSTANTS.LOADING);
   // boolean, status indicator for loading resources of selected lecture
   const [loadingResource, setLoadingResource] = useState(true);
   // boolean, fetching resources errors
@@ -31,8 +40,14 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
   // boolean, authorization state of current user
   const [notAuthorized, setNotAuthorized] = useState(false);
   // lecture object, currently selected lecture
+  // fix, when user comes from "watch" button of course details,
+  // fix,  ... the resource renders "no resource" for this lecture and "/res" api called twice
+  // ... by try to figure out the bug, every thing work as expected
+  // .... till fetching actual resource and renderResource re-executed and reached "cas SUCCESS"
+  // ... but "resource" component doe not re-render and page remains "no content"
   const [selectedLecture, setSelectedLecture] = useState(
-    selectLecture({ lectures, id: router?.query?.lecture }),
+    // selectLecture({ lectures, id: router?.query?.lecture }),
+    null,
   );
   // update state handler to update state in mounted component only
   const { updateSt } = useUpdateMounted();
@@ -107,21 +122,26 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
     /**
       * fetch resources of current lecture and add it to selectedLecture object
      */
-    if (selectedLecture && !selectedLecture.res) {
-      setLoadingResource(true);
+    if (selectedLecture && !selectedLecture?.res) {
+      // setLoadingResource(true);
+      // .catch(() => updateSt(setError, true))
+      setResState(RES_STATE_CONSTANTS.LOADING);
       return fetchLectRes({ cId: router?.query?.cid, lId: selectedLecture?.id })
         .then(({ resources: responseResources, error: resError }) => {
           if (resError === 'not authenticated' || resError === 'not authorized') {
-            return updateSt(setNotAuthorized, true);
+            return updateSt(setResState, RES_STATE_CONSTANTS.NOT_AUTHORIZED);
+            // return updateSt(setNotAuthorized, true);
             // return setNotAuthorized(true);
           }
           // we MUTATE the state to avoid re-fetching the resources on every select
           selectedLecture.res = responseResources;
-          return updateSt(setSelectedLecture, selectedLecture);
+          return updateSt(setResState, RES_STATE_CONSTANTS.SUCCESS);
+          // return updateSt(setSelectedLecture, selectedLecture);
           // return setSelectedLecture(selectedLecture);
         })
-        .catch(() => updateSt(setError, true))
-        .finally(() => updateSt(setLoadingResource, false));
+        .catch(() => updateSt(setResState, RES_STATE_CONSTANTS.ERROR));
+      // .finally(() => updateSt(setLoadingResource, false));
+      // .finally(() => updateSt(setLoadingResource, false));
     }
   }, [router?.query?.cid, selectedLecture, updateSt]);
 
@@ -130,40 +150,28 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
    *  ... or informative message about user status
    */
   const renderResource = useMemo(
-    () => (
-      <>
-        {
-          // user not authorized to see lecture content
-          notAuthorized
-            ? (
-              <NotAuthorized />
-            )
-            : null
-        }
-        {
-          // error happened
-          error
-            ? <ErrorPage />
-            : null
-        }
-        {
-          loadingResource
-            ? <Loader />
-            : null
-        }
-        {
-          // lecture with one or more resource
-          selectedLecture?.res?.length > 0 && !loadingResource
-            ? (
-              <Resource
-                resources={selectedLecture.res}
-              />
-            )
-            : null
-        }
-      </>
-    ),
-    [selectedLecture, notAuthorized, error, loadingResource],
+    () => {
+      switch (resState) {
+        case RES_STATE_CONSTANTS.LOADING:
+          return <Loader />;
+        case RES_STATE_CONSTANTS.SUCCESS:
+          return (
+            <Resource
+              resources={selectedLecture?.res}
+            />
+          );
+        case RES_STATE_CONSTANTS.NOT_AUTHORIZED:
+          return (
+            <NotAuthorized />
+          );
+        case RES_STATE_CONSTANTS.ERROR:
+          return (
+            <ErrorPage />
+          );
+        default:
+          return null;
+      }
+    }, [resState, selectedLecture?.res],
   );
 
   return (
@@ -172,6 +180,10 @@ const CoursePlayer = ({ course, lectures: initLects }) => {
       ? (
         <>
           <Head>
+            {/*
+              * page title
+              * "Lecture title" + "Course Title"
+            */}
             <title>
               {
                 selectedLecture?.title

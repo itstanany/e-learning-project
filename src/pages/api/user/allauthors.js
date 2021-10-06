@@ -1,14 +1,13 @@
-import { getAllAuthors } from '../../../utils/server';
-
 /**
- * api endpoint for getting all authors
- * @param {*} req NextJS request object
- * @param {*} res NextJS response object
- * @returns array of document objects of fields: "uid", "name", and "role"
+ * API route handler for getting all authors
  */
-const handler = async (req, res) => {
-  const allAuthors = await getAllAuthors();
-  return res.json({ allAuthors });
-};
+import nc from 'next-connect';
+import { requireAuth } from '../../../utils/server/middlewares';
+import { allAuthorsController } from '../../../utils/server/controllers';
+
+const handler = nc();
+handler.use(requireAuth);
+
+handler.use(allAuthorsController);
 
 export default handler;

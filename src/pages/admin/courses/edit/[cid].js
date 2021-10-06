@@ -1,7 +1,11 @@
+/**
+ * Edit course page
+ */
 import { useRouter } from 'next/router';
 import { CourseEditForm } from '../../../../components/CourseForm';
+import { adminEditorAccess, protectPage } from '../../../../utils/server';
 
-function EditCourse() {
+function EditCoursePage() {
   const router = useRouter();
   return (
     <CourseEditForm
@@ -10,4 +14,8 @@ function EditCourse() {
   );
 }
 
-export default EditCourse;
+export default EditCoursePage;
+
+const getSSProps = () => ({ props: {} });
+
+export const getServerSideProps = protectPage(adminEditorAccess(getSSProps));

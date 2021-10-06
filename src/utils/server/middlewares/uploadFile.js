@@ -3,10 +3,11 @@ import { bypassThumbnailUpload } from '../bypassThumbnailUpload';
 
 /**
  * Save the file into google firebase storage
- * @param {*} req NextJs request object
- * @param {*} res NextJs response object
- * @param {*} next next function in api callback stack
+ * @param {object} req NextJs request object
+ * @param {object} res NextJs response object
+ * @param {object} next next function in api callback stack
  */
+// eslint-disable-next-line consistent-return
 const uploadFile = (req, res, next) => {
   try {
     const blob = adminBucket.file(req.file.originalname + (Math.random() * 10));

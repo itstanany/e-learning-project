@@ -39,6 +39,7 @@ const STATE_CONSTANTS = {
   SUCCESS: 'SUCCESS',
   INVALID: 'INVALID',
   FAILED: 'FAILED',
+  OFFLINE: 'OFFLINE',
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -68,10 +69,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BasicCourseForm = ({
+function BasicCourseForm({
   initialCourse,
   initialLectures,
-}) => {
+}) {
   // classes object of class names
   const classes = useStyles();
 
@@ -205,14 +206,10 @@ const BasicCourseForm = ({
         return setSubmitState(STATE_CONSTANTS.INVALID);
       }
       // submit course
-      const { state } = await submitCourse({ lectures, courseInfo, thumbnail });
-      /* fix deleteMe */
-      await submitCourse({ lectures, courseInfo, thumbnail });
-      await submitCourse({ lectures, courseInfo, thumbnail });
-      await submitCourse({ lectures, courseInfo, thumbnail });
-      await submitCourse({ lectures, courseInfo, thumbnail });
-      await submitCourse({ lectures, courseInfo, thumbnail });
-      // fix, end of delete me
+      const {
+        state,
+        error,
+      } = await submitCourse({ lectures, courseInfo, thumbnail });
       // update the component state depending on submission state
       switch (state) {
         case SUBMIT_STATE.ADDED:
@@ -227,7 +224,11 @@ const BasicCourseForm = ({
           _state = STATE_CONSTANTS.FAILED;
           break;
         case SUBMIT_STATE.ERROR:
-          _state = STATE_CONSTANTS.ERROR;
+          if (error?.message === 'Failed to fetch') {
+            _state = STATE_CONSTANTS.OFFLINE;
+          } else {
+            _state = STATE_CONSTANTS.ERROR;
+          }
           break;
         default:
           break;
@@ -303,6 +304,10 @@ const BasicCourseForm = ({
       case STATE_CONSTANTS.FAILED:
         msg = 'Sorry, Failed to Submit, Please Try again';
         severity = 'error';
+        break;
+      case STATE_CONSTANTS.OFFLINE:
+        msg = 'It seems You are offline. Don\'t worry, we saved your work and will try again when you back online';
+        severity = 'warning';
         break;
       default:
         break;
@@ -404,7 +409,7 @@ const BasicCourseForm = ({
       </Snackbar>
     </Container>
   );
-};
+}
 
 export default BasicCourseForm;
 

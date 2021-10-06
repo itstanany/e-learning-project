@@ -15,7 +15,7 @@ function CourseNotFound() {
         </a>
       </Link>
     </div>
-  )
+  );
 }
 
 export default CourseNotFound;

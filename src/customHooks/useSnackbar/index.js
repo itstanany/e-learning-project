@@ -1,7 +1,17 @@
-import { Button, Snackbar } from '@material-ui/core';
+import { Snackbar } from '@material-ui/core';
 import { useCallback, useMemo, useState } from 'react';
 import { Alert } from '../../components/Alert';
 
+/**
+ * Custom hook to show toast message
+ * @param {object} paramsObj - parameters object
+ * @param {integer} paramsObj.autoHideDuration - auto hide duration for toast message
+ * @returns {object} returnObj - return object to return different values
+ * @returns {function} returnObj.showSuccess - function to show success toast message
+ * @returns {function} returnObj.showError - function to show error toast message
+ * @returns {function} returnObj.showInfo - function to show info toast message
+ * @returns {function} returnObj.showWarning - function to show warning toast message
+*/
 function useSnackbar({
   autoHideDuration = 6000,
 } = {}) {
@@ -20,6 +30,9 @@ function useSnackbar({
   }, []);
 
   const showSnackbar = useCallback(({ msg = '', severity = '' } = {}) => {
+    /**
+     * Open and show the toast message
+     */
     setSnackbarState({
       open: true,
       message: msg,
@@ -28,6 +41,10 @@ function useSnackbar({
   }, []);
 
   const showSuccess = useCallback(({ msg = '' } = {}) => {
+    /**
+     * Show success toast message
+     * @param {string} paramsObj.msg - toast message
+     */
     showSnackbar({ msg, severity: 'success' });
   }, [showSnackbar]);
 
@@ -42,6 +59,7 @@ function useSnackbar({
   const showWarning = useCallback(({ msg = '' } = {}) => {
     showSnackbar({ msg, severity: 'warning' });
   }, [showSnackbar]);
+
   const snackbar = useMemo(() => (
     <Snackbar
       autoHideDuration={autoHideDuration}

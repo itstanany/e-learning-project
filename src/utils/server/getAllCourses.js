@@ -6,8 +6,9 @@ import { adminFirestore } from '../../firebase/admin';
 import { getUserDoc } from './getUserDoc';
 
 /**
- *return user subscribed courses or all courses in the database
- * @param {object} param0 uid => user id
+ * return user subscribed courses or all courses in the database
+ * @param {object} param0 - customization object
+ * @param {string} param0.uid - user id
  * @returns array of courses objects
  */
 const getAllcourses = async ({ uid } = {}) => {

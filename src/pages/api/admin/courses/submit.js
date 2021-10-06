@@ -1,5 +1,5 @@
 /**
- * Course submission route
+ * Course submission API route handler
  * it accepts course addition or editing
  */
 import nextConnect from 'next-connect';
