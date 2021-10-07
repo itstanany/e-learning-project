@@ -3,7 +3,7 @@ import { STRIPE_PUBLIC_KEY } from '../config';
 
 let stripePromise = null;
 
-const getStipe = () => {
+const getStripe = () => {
   if (!stripePromise) {
     stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
   }
@@ -11,5 +11,5 @@ const getStipe = () => {
 };
 
 export {
-  getStipe,
+  getStripe,
 };

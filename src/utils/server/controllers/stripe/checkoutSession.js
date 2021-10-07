@@ -13,7 +13,8 @@ const checkoutSessionController = async (req, res) => {
         mode: 'payment',
         payment_method_types: ['card'],
         line_items: req?.body?.items ?? [],
-        success_url: '/success',
+        // eslint-disable-next-line no-undef
+        success_url: `/success?sessionId=${CHECKOUT_SESSION_ID}`,
         cancel_url: '/cancel',
       });
       return res.status(200).json(session);

@@ -1,11 +1,13 @@
 import { useCallback } from 'react';
 import Head from 'next/head';
+import { Button } from '@material-ui/core';
 import { apiPostJson } from '../../utils/client';
 import { getStripe } from '../../utils/client/stripe';
 
 function Enroll() {
   const redirectToCheckout = useCallback(
-    async () => {
+    async (e) => {
+      e.stopPropagation();
       const { data: { id } } = await apiPostJson({
         url: 'stripe/checkoutSession',
         body: {
@@ -32,6 +34,11 @@ function Enroll() {
         <h1>
           Coming Soon, Stay tuned!
         </h1>
+        <Button
+          onClick={redirectToCheckout}
+        >
+          Enroll
+        </Button>
       </div>
     </>
 
