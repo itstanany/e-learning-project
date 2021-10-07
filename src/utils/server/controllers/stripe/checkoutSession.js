@@ -6,6 +6,7 @@ import { getStripe } from '../../stripe';
 
 const stripe = getStripe();
 
+// should deploy instantly
 const checkoutSessionController = async (req, res) => {
   if (req.method === 'POST') {
     try {
