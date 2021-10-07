@@ -8,7 +8,7 @@ function Enroll() {
   const redirectToCheckout = useCallback(
     async (e) => {
       e.stopPropagation();
-      const { data: { id } } = await apiPostJson({
+      const { data/* : { id } */ } = await apiPostJson({
         url: 'stripe/checkoutSession',
         body: {
           items: [{
@@ -18,7 +18,7 @@ function Enroll() {
         },
       });
       const stripe = await getStripe();
-      await stripe.redirectToCheckout({ sessionId: id });
+      // await stripe.redirectToCheckout({ sessionId: id });
     },
     [],
   );

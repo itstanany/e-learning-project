@@ -1,4 +1,4 @@
-import { getStripe } from '../../config/stripe';
+import { getStripe } from '../../stripe';
 
 const stripe = getStripe();
 

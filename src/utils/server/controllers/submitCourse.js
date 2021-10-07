@@ -1,4 +1,23 @@
 import { saveCourseInfo } from '../saveCourseInfo';
+import { getStripe } from '../stripe';
+
+const createProduct = async ({
+  name,
+  id,
+  images = [],
+  active = true,
+  description = '',
+} = {}) => {
+  const stripe = getStripe();
+  const product = {
+    name,
+    id,
+    images,
+    active,
+    description,
+  };
+  const result = await stripe.products.create(product);
+}
 
 /**
  * Controller for course submission

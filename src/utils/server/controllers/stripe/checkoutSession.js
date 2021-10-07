@@ -6,17 +6,17 @@ import { getStripe } from '../../stripe';
 
 const stripe = getStripe();
 
-// should deploy instantly
 const checkoutSessionController = async (req, res) => {
   if (req.method === 'POST') {
+    console.log('inside post method ahndler');
     try {
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         payment_method_types: ['card'],
         line_items: req?.body?.items ?? [],
         // eslint-disable-next-line no-undef
-        success_url: `/success?sessionId=${CHECKOUT_SESSION_ID}`,
-        cancel_url: '/cancel',
+        success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.headers.origin}/cart`,
       });
       return res.status(200).json(session);
     } catch (err) {
